@@ -148,11 +148,11 @@ public class Connection {
 		return this.name;
 	}
 
-	public void addListener( Listener listener ) {
+	void addListener( Listener listener ) {
 		this.listenerHandler.addListener( listener );
 	}
 
-	public void removeListener( Listener listener ) {
+	void removeListener( Listener listener ) {
 		this.listenerHandler.removeListener( listener );
 	}
 

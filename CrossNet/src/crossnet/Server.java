@@ -29,21 +29,32 @@ public class Server extends LocalEndPoint {
 
 	private final MessageParser messageParser;
 
+	/**
+	 * Generates the IDs used to identify {@link Connection}s.
+	 */
 	private final ConnectionIDGenetator connectionIDGenetator = new ConnectionIDGenetator();
 
-	//TODO: Use a Map of ID -> Connection instead ?
+	/**
+	 * List of the current {@link Connection}s.
+	 */
 	private List< Connection > connections = new ArrayList<>();
 
+	/**
+	 * The socket for incoming {@link Connection}s.
+	 */
 	private ServerSocketChannel serverSocketChannel;
 
-	private ListenerHandler listenerHandler = new ListenerHandler() {
+	/**
+	 * The Server listener.
+	 */
+	protected ListenerHandler listenerHandler = new ListenerHandler() {
 
+		@SuppressWarnings( "synthetic-access" )
 		@Override
 		public void disconnected( Connection connection ) {
+			// Remove the reference to the disconnected Connection.
 			Server.this.connections.remove( connection );
-			for ( Listener listener : this.listeners ) {
-				listener.disconnected( connection );
-			}
+			super.disconnected( connection );
 		}
 	};
 
@@ -192,10 +203,10 @@ public class Server extends LocalEndPoint {
 	}
 
 	/**
-	 * Bind the Server to a TCP port and start listening.
+	 * Bind the Server to a TCP port and start listening for new connections.
 	 * 
 	 * @param port
-	 *            The TCP port on which to listen for new connections.
+	 *            The TCP port on which to listen.
 	 * @throws IOException
 	 *             If the server could not bind correctly.
 	 */
@@ -228,6 +239,11 @@ public class Server extends LocalEndPoint {
 		Log.info( "CrossNet", "Server started listening" );
 	}
 
+	/**
+	 * Checks if any {@link Connection} needs pinging.
+	 * <p>
+	 * Called by {@link #update(int)}.
+	 */
 	private void ping() {
 		long time = System.currentTimeMillis();
 		for ( Connection connection : this.connections ) {
@@ -237,6 +253,11 @@ public class Server extends LocalEndPoint {
 		}
 	}
 
+	/**
+	 * Checks if any {@link Connection} needs keep alive.
+	 * <p>
+	 * Called by {@link #update(int)}.
+	 */
 	private void keepAlive() {
 		long time = System.currentTimeMillis();
 		for ( Connection connection : this.connections ) {
@@ -247,6 +268,14 @@ public class Server extends LocalEndPoint {
 		}
 	}
 
+	/**
+	 * Accepts a new {@link Connection}.
+	 * <p>
+	 * Called by {@link #update(int)}.
+	 * 
+	 * @param key
+	 *            The key that triggered the accept.
+	 */
 	private void accept( SelectionKey key ) {
 		// New connection
 		if ( this.serverSocketChannel == null ) {
@@ -269,13 +298,13 @@ public class Server extends LocalEndPoint {
 			int id = this.connectionIDGenetator.getNextConnectionID();
 			connection.setID( id );
 
+			connection.addListener( this.listenerHandler );
+
 			// Make TCP accept and attach Connection to SelectionKey
 			TcpTransportLayer tcpTransportLayer = (TcpTransportLayer) connection.getTransportLayer();
 			SelectionKey selectionKey = tcpTransportLayer.accept( this.selector, socketChannel );
 			selectionKey.attach( connection );
-
 			connection.setConnected( true );
-			connection.addListener( this.listenerHandler );
 
 			// Store Connection
 			this.connections.add( connection );
@@ -291,6 +320,14 @@ public class Server extends LocalEndPoint {
 		}
 	}
 
+	/**
+	 * Reads from the {@link Connection}.
+	 * <p>
+	 * Called by {@link #update(int)}.
+	 * 
+	 * @param key
+	 *            The key that triggered the read.
+	 */
 	private static void read( SelectionKey key ) {
 		Connection connection = (Connection) key.attachment();
 
@@ -318,6 +355,14 @@ public class Server extends LocalEndPoint {
 		}
 	}
 
+	/**
+	 * Writes to the {@link Connection}.
+	 * <p>
+	 * Called by {@link #update(int)}.
+	 * 
+	 * @param key
+	 *            The key that triggered the write.
+	 */
 	private static void write( SelectionKey key ) {
 		Connection connection = (Connection) key.attachment();
 
@@ -338,16 +383,31 @@ public class Server extends LocalEndPoint {
 	}
 
 	/**
-	 * Allows the Connections used by this to be subclassed.
+	 * Gets a new Connection.
+	 * <p>
+	 * This construct allows the Connections used by this to be sub classed.
 	 */
 	protected static Connection newConnection() {
 		return new Connection();
 	}
 
+	/**
+	 * Gets the current Connections.
+	 * 
+	 * @return The current Connections.
+	 */
 	public List< Connection > getConnections() {
 		return this.connections;
 	}
 
+	/**
+	 * Sends a Message to all Connections, except for the one with connectionID.
+	 * 
+	 * @param connectionID
+	 *            The ID to skip.
+	 * @param message
+	 *            The Message to send.
+	 */
 	public void sendToAllExcept( int connectionID, Message message ) {
 		for ( Connection connection : this.connections ) {
 			if ( connection.getID() == connectionID ) {
@@ -358,6 +418,12 @@ public class Server extends LocalEndPoint {
 		}
 	}
 
+	/**
+	 * Broadcasts a Message to all Connections.
+	 * 
+	 * @param message
+	 *            The Message to broadcast.
+	 */
 	public void sendToAll( Message message ) {
 		for ( Connection connection : this.connections ) {
 			connection.send( message );

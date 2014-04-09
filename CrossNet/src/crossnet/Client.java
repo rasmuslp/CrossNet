@@ -268,7 +268,7 @@ public class Client extends LocalEndPoint {
 	}
 
 	/**
-	 * Checks if the Connection needs pinging.
+	 * Checks if the {@link Connection} needs pinging.
 	 * <p>
 	 * Called by {@link #update(int)}.
 	 */
@@ -284,7 +284,7 @@ public class Client extends LocalEndPoint {
 	}
 
 	/**
-	 * Checks if the Connection needs keep alive.
+	 * Checks if the {@link Connection} needs keep alive.
 	 * <p>
 	 * Called by {@link #update(int)}.
 	 */
@@ -301,11 +301,12 @@ public class Client extends LocalEndPoint {
 	}
 
 	/**
-	 * Reads from the Connection.
+	 * Reads from the {@link Connection}.
 	 * <p>
 	 * Called by {@link #update(int)}.
 	 * 
 	 * @throws IOException
+	 *             If a read error occurs.
 	 */
 	private void read() throws IOException {
 		while ( true ) {
@@ -338,11 +339,12 @@ public class Client extends LocalEndPoint {
 	}
 
 	/**
-	 * Writes to the Connection.
+	 * Writes to the {@link Connection}.
 	 * <p>
 	 * Called by {@link #update(int)}.
 	 * 
 	 * @throws IOException
+	 *             If a write error occurs.
 	 */
 	private void write() throws IOException {
 		this.connection.getTransportLayer().write();

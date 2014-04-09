@@ -4,23 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import crossnet.Connection;
-import crossnet.log.Log;
+import crossnet.Server;
 import crossnet.message.Message;
 
 /**
  * Redistributes events.
  * 
- * Used internally in Server and Connection.
+ * Used internally in {@link Server} and {@link Connection}.
  * 
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
 public class ListenerHandler implements Listener {
 
+	/**
+	 * Lock for adding and removing listeners.
+	 */
 	private final Object lock = new Object();
 
+	/**
+	 * The listeners registered with this.
+	 */
 	protected final List< Listener > listeners = new ArrayList<>();
 
+	/**
+	 * Adds a listener. A Listener cannot be added multiple times.
+	 * 
+	 * @param listener
+	 *            The Listener to add.
+	 */
 	public void addListener( Listener listener ) {
 		if ( listener == null ) {
 			throw new IllegalArgumentException( "Listener cannot be null." );
@@ -33,10 +45,14 @@ public class ListenerHandler implements Listener {
 
 			this.listeners.add( listener );
 		}
-
-		Log.trace( "CrossNet", "Server listener added: " + listener.getClass().getName() );
 	}
 
+	/**
+	 * Removes a Listener.
+	 * 
+	 * @param listener
+	 *            The Listener to remove.
+	 */
 	public void removeListener( Listener listener ) {
 		if ( listener == null ) {
 			throw new IllegalArgumentException( "Listener cannot be null." );
@@ -49,8 +65,6 @@ public class ListenerHandler implements Listener {
 
 			this.listeners.remove( listener );
 		}
-
-		Log.trace( "CrossNet", "Server listener removed: " + listener.getClass().getName() );
 	}
 
 	@Override
@@ -62,7 +76,6 @@ public class ListenerHandler implements Listener {
 
 	@Override
 	public void disconnected( Connection connection ) {
-		//TODO What to do about missing "removeConnection"
 		for ( Listener listener : this.listeners ) {
 			listener.disconnected( connection );
 		}
