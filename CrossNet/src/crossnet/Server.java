@@ -190,7 +190,7 @@ public class Server extends LocalEndPoint {
 				Log.debug( "CrossNet", connection + " timed out." );
 			} else {
 				if ( connection.getTransportLayer().needsPing( time ) ) {
-					connection.getTransportLayer().updatePingRoundTripTime();
+					connection.getTransportLayer().requestPingRoundTripTimeUpdate();
 				} else if ( connection.getTransportLayer().needsKeepAlive( time ) ) {
 					KeepAliveMessage keepAliveMessage = new KeepAliveMessage();
 					connection.sendInternal( keepAliveMessage );
@@ -248,7 +248,7 @@ public class Server extends LocalEndPoint {
 		long time = System.currentTimeMillis();
 		for ( Connection connection : this.connections ) {
 			if ( connection.getTransportLayer().needsPing( time ) ) {
-				connection.getTransportLayer().updatePingRoundTripTime();
+				connection.getTransportLayer().requestPingRoundTripTimeUpdate();
 			}
 		}
 	}

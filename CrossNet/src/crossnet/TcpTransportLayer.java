@@ -14,6 +14,12 @@ import crossnet.message.MessageParser;
 import crossnet.packet.Packet;
 import crossnet.packet.length.LengthPacketFactory;
 
+/**
+ * TransportLayer for raw TCP socket.
+ * 
+ * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
+ * 
+ */
 public class TcpTransportLayer extends TransportLayer {
 
 	private SocketChannel socketChannel;
@@ -79,12 +85,12 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	@Override
-	public boolean needsKeepAlive( long time ) {
+	public boolean needsKeepAlive( long timestamp ) {
 		if ( this.socketChannel == null ) {
 			return false;
 		}
 
-		if ( this.keepAliveMillis > 0 && time - this.lastWriteTime > this.keepAliveMillis ) {
+		if ( this.keepAliveMillis > 0 && timestamp - this.lastWriteTime > this.keepAliveMillis ) {
 			return true;
 		}
 
@@ -92,12 +98,12 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	@Override
-	public boolean isTimedOut( long time ) {
+	public boolean isTimedOut( long timestamp ) {
 		if ( this.socketChannel == null ) {
 			return false;
 		}
 
-		if ( this.timeoutMillis > 0 && time - this.lastReadTime > this.timeoutMillis ) {
+		if ( this.timeoutMillis > 0 && timestamp - this.lastReadTime > this.timeoutMillis ) {
 			return true;
 		}
 
@@ -105,12 +111,12 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	@Override
-	public boolean needsPing( long time ) {
+	public boolean needsPing( long timestamp ) {
 		if ( this.socketChannel == null ) {
 			return false;
 		}
 
-		if ( this.pingMillis > 0 && time - this.pingSendTime > this.pingMillis ) {
+		if ( this.pingMillis > 0 && timestamp - this.pingSendTime > this.pingMillis ) {
 			return true;
 		}
 

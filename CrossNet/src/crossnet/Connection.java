@@ -190,7 +190,7 @@ public class Connection {
 			// Ignore
 			return;
 		} else if ( message instanceof PingMessage ) {
-			this.transportLayer.updatePingRTT( (PingMessage) message );
+			this.transportLayer.gotPingMessage( (PingMessage) message );
 		}
 
 		this.listenerHandler.received( this, message );

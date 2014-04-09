@@ -27,7 +27,7 @@ public class Log {
 	public static boolean ERROR;
 
 	/**
-	 * Static initialization of default log level.
+	 * Static initialisation of default log level.
 	 */
 	static {
 		Log.set( LogLevel.INFO );
@@ -155,6 +155,7 @@ public class Log {
 
 		private long firstTimeStamp = new Date().getTime();
 
+		@SuppressWarnings( "incomplete-switch" )
 		public void log( LogLevel level, String group, String message, Throwable throwable ) {
 			if ( level.ordinal() < Log.currentLogLevel.ordinal() ) {
 				// Return if supplied log level is below the set one.

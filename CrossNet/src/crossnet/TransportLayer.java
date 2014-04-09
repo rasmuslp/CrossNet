@@ -3,35 +3,104 @@ package crossnet;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import crossnet.listener.Listener;
 import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.MessageParser;
+import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.PingMessage;
+import crossnet.packet.Packet;
 import crossnet.packet.PacketFactory;
 
+/**
+ * The part of a {@link Connection} that handles the actual transport of data.
+ * 
+ * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
+ * 
+ */
 public abstract class TransportLayer {
 
+	/**
+	 * The Connection this is a TransportLayer for.
+	 */
 	protected final Connection connection;
+
+	/**
+	 * The PacketFactory used to parse to and from {@link Packet}s.
+	 */
 	protected final PacketFactory packetFactory;
+
+	/**
+	 * The MessageParser used to parse byte arrays to {@link Message}s.
+	 */
 	protected final MessageParser messageParser;
 
+	/**
+	 * The lock used to guard the {@link #writeBuffer}.
+	 */
 	protected final Object writeLock = new Object();
 
+	/**
+	 * The read / receive buffer.
+	 */
 	protected final ByteBuffer readBuffer;
+
+	/**
+	 * The write / send buffer.
+	 */
 	protected final ByteBuffer writeBuffer;
 
+	/**
+	 * Time stamp from the last read.
+	 */
+	protected volatile long lastReadTime;
+
+	/**
+	 * Time stamp from the last write.
+	 */
+	protected volatile long lastWriteTime;
+
+	/**
+	 * {@link Connection} is considered idle when the {@link #writeBuffer} utilisation is below this threshold.
+	 * <p>
+	 * Default is 10%.
+	 */
 	protected float idleThreshold = 0.1f;
+
+	/**
+	 * Maximum time between {@link KeepAliveMessage}s should be sent.
+	 * <p>
+	 * Default is 10000 milliseconds.
+	 */
 	protected int keepAliveMillis = 10000;
+
+	/**
+	 * {@link Connection} is considered timed out when there hasn't been any reads within this time limit.
+	 * <p>
+	 * Default is 15000 milliseconds.
+	 */
 	protected int timeoutMillis = 15000;
 
+	/**
+	 * Maximum time between {@link PingMessage}s should be sent.
+	 * <p>
+	 * Default is 1000 milliseconds.
+	 */
 	protected int pingMillis = 1000;
-	protected int pingId = 0;
-	protected long pingSendTime = 0;
-	protected int pingRoundTripTime = 0;
 
-	protected volatile long lastReadTime;
-	protected volatile long lastWriteTime;
+	/**
+	 * ID of last {@link PingMessage} sent.
+	 */
+	protected int pingId = 0;
+
+	/**
+	 * Time stamp from when the last {@link PingMessage} was sent.
+	 */
+	protected long pingSendTime = 0;
+
+	/**
+	 * Last recorded round trip time.
+	 */
+	protected int pingRoundTripTime = 0;
 
 	TransportLayer( final Connection connection, final PacketFactory packetFactory, final MessageParser messageParser ) {
 		this.connection = connection;
@@ -41,59 +110,109 @@ public abstract class TransportLayer {
 		this.writeBuffer = ByteBuffer.allocate( this.packetFactory.getMaxLength() );
 	}
 
-	/** @see #setIdleThreshold(float) */
+	/**
+	 * Determine if {@link Connection} is idle.
+	 * 
+	 * @see #idleThreshold
+	 * @return {@code True} iff the Connection is idle.
+	 */
 	public boolean isIdle() {
 		return this.writeBuffer.position() / (float) this.writeBuffer.capacity() < this.idleThreshold;
 	}
 
 	/**
-	 * If the percent of the TCP write buffer that is filled is less than the specified threshold,
-	 * {@link Listener#idle(Connection)} will be called for each network thread update. Default is 0.1.
+	 * Sets the threshold of when to consider the {@link Connection} idle.
+	 * 
+	 * @see #idleThreshold
+	 * @param idleThreshold
+	 *            The new threshold.
 	 */
 	public void setIdleThreshold( float idleThreshold ) {
 		this.idleThreshold = idleThreshold;
 	}
 
-	public abstract boolean needsKeepAlive( long time );
+	/**
+	 * Determine if {@link Connection} needs a {@link KeepAliveMessage} sent.
+	 * 
+	 * @param timestamp
+	 *            The time stamp to compare to. Should be now.
+	 * @return {@code True} iff keep alive is needed.
+	 */
+	public abstract boolean needsKeepAlive( long timestamp );
 
 	/**
-	 * Default is 10000. Set to 0 to disable.
+	 * Sets the maximum time between {@link KeepAliveMessage}s should be sent.
+	 * <p>
+	 * Set to 0 to disable.
 	 * 
+	 * @see #keepAliveMillis
 	 * @param keepAliveMillis
+	 *            The new time limit.
 	 */
 	public void setKeepAlive( int keepAliveMillis ) {
 		this.keepAliveMillis = keepAliveMillis;
 	}
 
-	public abstract boolean isTimedOut( long time );
+	/**
+	 * Determine if {@link Connection} is timed out.
+	 * 
+	 * @param timestamp
+	 *            The time stamp to compare to. Should be now.
+	 * @return {@code True} iff timed out.
+	 */
+	public abstract boolean isTimedOut( long timestamp );
 
 	/**
-	 * Default is 15000. Set to 0 to disable.
+	 * Sets the time out limit.
+	 * <p>
+	 * Set to 0 to disable.
 	 * 
+	 * @see #timeoutMillis
 	 * @param timeoutMillis
+	 *            The new time limit.
 	 */
 	public void setTimeout( int timeoutMillis ) {
 		this.timeoutMillis = timeoutMillis;
 	}
 
-	public abstract boolean needsPing( long time );
+	/**
+	 * Determine if {@link Connection} needs a {@link PingMessage} sent.
+	 * 
+	 * @param timestamp
+	 *            The time stamp to compare to. Should be now.
+	 * @return {@code True} iff needs ping.
+	 */
+	public abstract boolean needsPing( long timestamp );
 
 	/**
-	 * Default is 1000. Set to 0 to disable.
+	 * Sets the maximum time between {@link PingMessage}s should be sent.
+	 * <p>
+	 * Set to 0 to disable.
 	 * 
+	 * @see #pingMillis
 	 * @param pingMillis
+	 *            The new time limit.
 	 */
-	public void setPingMillis( int pingMillis ) {
+	public void setPing( int pingMillis ) {
 		this.pingMillis = pingMillis;
 	}
 
-	public void updatePingRoundTripTime() {
+	/**
+	 * Requests an update of the ping by sending a new {@link PingMessage}.
+	 */
+	void requestPingRoundTripTimeUpdate() {
 		Message message = new PingMessage( this.pingId++ );
 		this.pingSendTime = System.currentTimeMillis();
 		this.connection.sendInternal( message );
 	}
 
-	public void updatePingRTT( PingMessage pingMessage ) {
+	/**
+	 * If this is the answer to a request, the {@link #pingRoundTripTime} is updated. Otherwise, return to sender.
+	 * 
+	 * @param pingMessage
+	 *            The PingMessage received.
+	 */
+	void gotPingMessage( PingMessage pingMessage ) {
 		if ( pingMessage.isReply() ) {
 			if ( pingMessage.getId() == ( this.pingId - 1 ) ) {
 				// Update RTT
@@ -111,29 +230,53 @@ public abstract class TransportLayer {
 		}
 	}
 
+	/**
+	 * Gets the last recorded {@link #pingRoundTripTime}.
+	 * 
+	 * @return the last recorded ping round trip time.
+	 */
 	public int getPingRoundTripTime() {
 		return this.pingRoundTripTime;
 	}
 
 	/**
-	 * May return null.
+	 * Gets the address of what this is connected to.
 	 * 
-	 * @return
+	 * @return The address of what this is connected to. May return {@code null} if not connected or an error occurs.
 	 */
 	public abstract String getRemoteAddress();
 
 	/**
+	 * Send a Message.
 	 * 
 	 * @param message
-	 * @return The number of bytes added to the send (write) buffer.
+	 *            The Message to send.
+	 * @return The number of bytes added to the send buffer.
 	 * @throws IOException
+	 *             If unable to send.
 	 */
-	public abstract int send( Message message ) throws IOException;
+	abstract int send( Message message ) throws IOException;
 
+	/**
+	 * Reads a Message.
+	 * 
+	 * @return A new Message or null if not enough available data.
+	 * @throws IOException
+	 *             If unable to read.
+	 */
 	abstract Message read() throws IOException;
 
+	/**
+	 * Writes data from the {@link #writeBuffer}.
+	 * 
+	 * @throws IOException
+	 *             If unable to write.
+	 */
 	abstract void write() throws IOException;
 
+	/**
+	 * Close.
+	 */
 	abstract void close();
 
 }
