@@ -70,9 +70,9 @@ public class Client extends LocalEndPoint {
 			throw new RuntimeException( "Error opening Selector", e );
 		}
 
-		TransportLayer transportLayer = new TcpTransportLayer( messageParser );
-
-		this.connection = new Connection( transportLayer );
+		this.connection = new Connection();
+		TransportLayer transportLayer = new TcpTransportLayer( this.connection, messageParser );
+		this.connection.initialize( transportLayer );
 	}
 
 	@Override
@@ -313,7 +313,7 @@ public class Client extends LocalEndPoint {
 	 */
 	private void read() throws IOException {
 		while ( true ) {
-			Message message = this.connection.getTransportLayer().read( this.connection );
+			Message message = this.connection.getTransportLayer().read();
 			if ( message == null ) {
 				// No more messages could be read.
 				break;

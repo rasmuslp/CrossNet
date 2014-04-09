@@ -19,8 +19,8 @@ public class TcpTransportLayer extends TransportLayer {
 	private SocketChannel socketChannel;
 	private SelectionKey selectionKey;
 
-	public TcpTransportLayer( MessageParser messageParser ) {
-		super( new LengthPacketFactory(), messageParser );
+	TcpTransportLayer( final Connection connection, MessageParser messageParser ) {
+		super( connection, new LengthPacketFactory(), messageParser );
 	}
 
 	public SelectionKey accept( Selector selector, SocketChannel socketChannel ) throws IOException {
@@ -118,7 +118,7 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	@Override
-	public int send( Connection connection, Message message ) throws IOException {
+	public int send( Message message ) throws IOException {
 		if ( this.socketChannel == null ) {
 			throw new SocketException( "Connection is closed." );
 		}
@@ -148,9 +148,9 @@ public class TcpTransportLayer extends TransportLayer {
 			if ( Log.DEBUG ) {
 				float bufferLoad = this.writeBuffer.position() / (float) this.writeBuffer.capacity();
 				if ( Log.DEBUG && bufferLoad > 0.75f ) {
-					Log.debug( "CrossNet", connection + " write buffer is approaching capacity: " + bufferLoad );
+					Log.debug( "CrossNet", this.connection + " write buffer is approaching capacity: " + bufferLoad );
 				} else if ( Log.TRACE && bufferLoad > 0.25f ) {
-					Log.trace( "CrossNet", connection + " write buffer load: " + bufferLoad );
+					Log.trace( "CrossNet", this.connection + " write buffer load: " + bufferLoad );
 				}
 			}
 
@@ -161,7 +161,7 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	@Override
-	public Message read( Connection connection ) throws IOException {
+	public Message read() throws IOException {
 		if ( this.socketChannel == null ) {
 			throw new SocketException( "Connection is closed." );
 		}

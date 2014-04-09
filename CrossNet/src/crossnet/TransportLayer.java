@@ -10,6 +10,7 @@ import crossnet.packet.PacketFactory;
 
 public abstract class TransportLayer {
 
+	protected final Connection connection;
 	protected final PacketFactory packetFactory;
 	protected final MessageParser messageParser;
 
@@ -25,7 +26,8 @@ public abstract class TransportLayer {
 	protected volatile long lastReadTime;
 	protected volatile long lastWriteTime;
 
-	public TransportLayer( final PacketFactory packetFactory, final MessageParser messageParser ) {
+	public TransportLayer( final Connection connection, final PacketFactory packetFactory, final MessageParser messageParser ) {
+		this.connection = connection;
 		this.packetFactory = packetFactory;
 		this.messageParser = messageParser;
 		this.readBuffer = ByteBuffer.allocate( this.packetFactory.getMaxLength() );
@@ -76,14 +78,13 @@ public abstract class TransportLayer {
 
 	/**
 	 * 
-	 * @param connection
 	 * @param message
 	 * @return The number of bytes added to the send (write) buffer.
 	 * @throws IOException
 	 */
-	public abstract int send( Connection connection, Message message ) throws IOException;
+	public abstract int send( Message message ) throws IOException;
 
-	public abstract Message read( Connection connection ) throws IOException;
+	public abstract Message read() throws IOException;
 
 	public abstract void write() throws IOException;
 

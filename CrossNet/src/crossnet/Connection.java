@@ -17,7 +17,7 @@ public class Connection {
 
 	private String name;
 
-	private final TransportLayer transportLayer;
+	private TransportLayer transportLayer;
 
 	private volatile boolean isConnected;
 
@@ -28,7 +28,8 @@ public class Connection {
 
 	private ListenerHandler listenerHandler = new ListenerHandler();
 
-	public Connection( final TransportLayer transportLayer ) {
+	@SuppressWarnings( "hiding" )
+	final void initialize( final TransportLayer transportLayer ) {
 		this.transportLayer = transportLayer;
 	}
 
@@ -51,7 +52,7 @@ public class Connection {
 		}
 
 		try {
-			int length = this.transportLayer.send( this, message );
+			int length = this.transportLayer.send( message );
 			if ( length == 0 ) {
 				Log.trace( "CrossNet", this + " had nothing to send." );
 			} else if ( Log.DEBUG ) {
