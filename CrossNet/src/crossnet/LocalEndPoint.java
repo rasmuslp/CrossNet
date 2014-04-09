@@ -13,10 +13,24 @@ import crossnet.log.Log;
  */
 public abstract class LocalEndPoint implements Runnable {
 
+	/**
+	 * {@code True} iff the update thread is running.
+	 */
 	protected volatile boolean threadRunning = false;
+
+	/**
+	 * {@code True} iff the update thread should shut down or has shut down.
+	 */
 	protected volatile boolean shutdownThread = false;
 
+	/**
+	 * Lock used to hinder interference in the {@link #update(int)} method.
+	 */
 	protected final Object updateLock = new Object();
+
+	/**
+	 * The last thread to call {@link #update(int)}.
+	 */
 	protected Thread updateThread;
 
 	/**

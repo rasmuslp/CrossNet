@@ -20,14 +20,15 @@ import crossnet.message.MessageParser;
 import crossnet.message.framework.FrameworkMessage;
 import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.RegisterMessage;
-import crossnet.packet.PacketFactory;
 
 public class Server extends LocalEndPoint {
 
-	private final PacketFactory packetFactory;
-	private final MessageParser messageParser;
-
+	/**
+	 * The Selector for the TCP Socket.
+	 */
 	private final Selector selector;
+
+	private final MessageParser messageParser;
 
 	private final ConnectionIDGenetator connectionIDGenetator = new ConnectionIDGenetator();
 
@@ -47,17 +48,15 @@ public class Server extends LocalEndPoint {
 		}
 	};
 
-	public Server( final PacketFactory packetFactory, final MessageParser messageParser ) {
-		//TODO: This should be hardcoded based on transport layer ?
-		this.packetFactory = packetFactory;
-		this.messageParser = messageParser;
-
+	public Server( final MessageParser messageParser ) {
 		try {
 			this.selector = Selector.open();
 		} catch ( IOException e ) {
 			Log.error( "CrossNet", "Error opening Selector", e );
 			throw new RuntimeException( "Error opening Selector", e );
 		}
+
+		this.messageParser = messageParser;
 	}
 
 	@Override
@@ -155,9 +154,11 @@ public class Server extends LocalEndPoint {
 					try {
 						if ( key.isAcceptable() ) {
 							this.accept( key );
-						} else if ( key.isReadable() ) {
+						}
+						if ( key.isReadable() ) {
 							this.read( key );
-						} else if ( key.isWritable() ) {
+						}
+						if ( key.isWritable() ) {
 							this.write( key );
 						}
 					} catch ( CancelledKeyException e ) {
@@ -350,7 +351,7 @@ public class Server extends LocalEndPoint {
 	 * Allows the Connections used by this to be subclassed.
 	 */
 	protected Connection newConnection() {
-		TransportLayer transportLayer = new TcpTransportLayer( this.packetFactory, this.messageParser );
+		TransportLayer transportLayer = new TcpTransportLayer( this.messageParser );
 		Connection connection = new Connection( transportLayer );
 
 		return connection;

@@ -18,7 +18,6 @@ import crossnet.message.MessageParser;
 import crossnet.message.framework.FrameworkMessage;
 import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.RegisterMessage;
-import crossnet.packet.PacketFactory;
 
 /**
  * 
@@ -27,28 +26,53 @@ import crossnet.packet.PacketFactory;
  */
 public class Client extends LocalEndPoint {
 
-	private final Connection connection;
-
+	/**
+	 * The Selector for the TCP Socket.
+	 */
 	private final Selector selector;
 
-	private InetAddress connectHost;
-	private int connectPort;
-	private int connectTimeout;
+	/**
+	 * The Connection to the {@link Server}.
+	 */
+	private final Connection connection;
 
-	private volatile boolean registered = false;
+	/**
+	 * The server address of the current Connection. If disconnected, then of the last Connection.
+	 */
+	private InetAddress connectHost;
+
+	/**
+	 * The server port of the current Connection. If disconnected, then of the last Connection.
+	 */
+	private int connectPort;
+
+	/**
+	 * The server connection registration timeout of the current Connection. If disconnected, then of the last
+	 * Connection. This is given in milliseconds.
+	 */
+	private int connectRegistrationTimeout;
+
+	/**
+	 * Lock used by the registration mechanism.
+	 */
 	private final Object registrationLock = new Object();
 
-	public Client( final PacketFactory packetFactory, final MessageParser messageParser ) {
-		TransportLayer transportLayer = new TcpTransportLayer( packetFactory, messageParser );
+	/**
+	 * {@code True} iff registration with Server was successful.
+	 */
+	private volatile boolean registered = false;
 
-		this.connection = new Connection( transportLayer );
-
+	public Client( final MessageParser messageParser ) {
 		try {
 			this.selector = Selector.open();
 		} catch ( IOException e ) {
 			Log.error( "CrossNet", "Error opening Selector", e );
 			throw new RuntimeException( "Error opening Selector", e );
 		}
+
+		TransportLayer transportLayer = new TcpTransportLayer( messageParser );
+
+		this.connection = new Connection( transportLayer );
 	}
 
 	@Override
@@ -100,7 +124,7 @@ public class Client extends LocalEndPoint {
 	public void update( int timeout ) throws IOException {
 		this.updateThread = Thread.currentThread();
 		synchronized ( this.updateLock ) {
-			// Block to avoid select while binding.
+			// Block to avoid select while connecting.
 		}
 		long updateTime = 0;
 		int selects = 0;
@@ -129,7 +153,8 @@ public class Client extends LocalEndPoint {
 					try {
 						if ( key.isReadable() ) {
 							this.read();
-						} else if ( key.isWritable() ) {
+						}
+						if ( key.isWritable() ) {
 							this.write();
 						}
 					} catch ( CancelledKeyException e ) {
@@ -155,7 +180,22 @@ public class Client extends LocalEndPoint {
 		}
 	}
 
-	public void connect( InetAddress host, int port, int timeout ) throws IOException {
+	/**
+	 * Connects this Client to a Server.
+	 * <p>
+	 * As a minimal registration procedure is needed, the {@link #update(int)} method must be called on another thread
+	 * when this method is called.
+	 * 
+	 * @param host
+	 *            The address to connect to.
+	 * @param port
+	 *            The port to connect to.
+	 * @param registrationTimeout
+	 *            The registration timeout in milliseconds.
+	 * @throws IOException
+	 *             If the connection could not be opened or the attempt timed out.
+	 */
+	public void connect( InetAddress host, int port, int registrationTimeout ) throws IOException {
 		if ( host == null ) {
 			throw new IllegalArgumentException( "host cannot be null." );
 		}
@@ -166,7 +206,7 @@ public class Client extends LocalEndPoint {
 
 		this.connectHost = host;
 		this.connectPort = port;
-		this.connectTimeout = timeout;
+		this.connectRegistrationTimeout = registrationTimeout;
 
 		// Close any existing connection
 		this.close();
@@ -181,9 +221,9 @@ public class Client extends LocalEndPoint {
 			synchronized ( this.updateLock ) {
 				this.registered = false;
 				this.selector.wakeup();
-				timeoutEnd = System.currentTimeMillis() + this.connectTimeout;
+				timeoutEnd = System.currentTimeMillis() + this.connectRegistrationTimeout;
 				SocketAddress socketAddress = new InetSocketAddress( this.connectHost, this.connectPort );
-				//TODO About TCP timeout on connect ?
+
 				TcpTransportLayer tcpTransportLayer = (TcpTransportLayer) this.connection.getTransportLayer();
 				tcpTransportLayer.connect( this.selector, socketAddress, 5000 );
 			}
@@ -207,17 +247,35 @@ public class Client extends LocalEndPoint {
 		}
 	}
 
+	/**
+	 * Reconnects by calling {@link #connect(InetAddress, int, int)} with the values last passed to that method.
+	 * 
+	 * @throws IOException
+	 */
 	public void reconnect() throws IOException {
-		this.reconnect( this.connectTimeout );
+		this.reconnect( this.connectRegistrationTimeout );
 	}
 
-	public void reconnect( int timeout ) throws IOException {
+	/**
+	 * Reconnects by calling {@link #connect(InetAddress, int, int)} with the values last passed to that method, except
+	 * for the registration timeout.
+	 * 
+	 * @param registrationTimeout
+	 *            The new registration timeout in milliseconds.
+	 * @throws IOException
+	 */
+	public void reconnect( int registrationTimeout ) throws IOException {
 		if ( this.connectHost == null ) {
 			throw new IllegalStateException( "This Client has never been connected." );
 		}
-		this.connect( this.connectHost, this.connectPort, timeout );
+		this.connect( this.connectHost, this.connectPort, registrationTimeout );
 	}
 
+	/**
+	 * Checks if the Connection needs pinging.
+	 * <p>
+	 * Called by {@link #update(int)}.
+	 */
 	private void ping() {
 		if ( !this.connection.isConnected() ) {
 			return;
@@ -229,6 +287,11 @@ public class Client extends LocalEndPoint {
 		}
 	}
 
+	/**
+	 * Checks if the Connection needs keep alive.
+	 * <p>
+	 * Called by {@link #update(int)}.
+	 */
 	private void keepAlive() {
 		if ( !this.connection.isConnected() ) {
 			return;
@@ -241,6 +304,13 @@ public class Client extends LocalEndPoint {
 		}
 	}
 
+	/**
+	 * Reads from the Connection.
+	 * <p>
+	 * Called by {@link #update(int)}.
+	 * 
+	 * @throws IOException
+	 */
 	private void read() throws IOException {
 		while ( true ) {
 			Message message = this.connection.getTransportLayer().read( this.connection );
@@ -281,6 +351,13 @@ public class Client extends LocalEndPoint {
 		}
 	}
 
+	/**
+	 * Writes to the Connection.
+	 * <p>
+	 * Called by {@link #update(int)}.
+	 * 
+	 * @throws IOException
+	 */
 	private void write() throws IOException {
 		this.connection.getTransportLayer().write();
 	}

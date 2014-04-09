@@ -12,15 +12,15 @@ import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.MessageParser;
 import crossnet.packet.Packet;
-import crossnet.packet.PacketFactory;
+import crossnet.packet.length.LengthPacketFactory;
 
 public class TcpTransportLayer extends TransportLayer {
 
 	private SocketChannel socketChannel;
 	private SelectionKey selectionKey;
 
-	public TcpTransportLayer( PacketFactory packetFactory, MessageParser messageParser ) {
-		super( packetFactory, messageParser );
+	public TcpTransportLayer( MessageParser messageParser ) {
+		super( new LengthPacketFactory(), messageParser );
 	}
 
 	public SelectionKey accept( Selector selector, SocketChannel socketChannel ) throws IOException {
