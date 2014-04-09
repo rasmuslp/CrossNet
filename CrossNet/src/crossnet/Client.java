@@ -15,7 +15,6 @@ import crossnet.listener.Listener;
 import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.MessageParser;
-import crossnet.message.framework.FrameworkMessage;
 import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.RegisterMessage;
 
@@ -335,16 +334,6 @@ public class Client extends LocalEndPoint {
 			}
 			if ( !this.connection.isConnected() ) {
 				continue;
-			}
-
-			//TODO Review this.
-			if ( Log.DEBUG ) {
-				String objectString = message.getClass().getSimpleName();
-				if ( !( message instanceof FrameworkMessage ) ) {
-					Log.debug( "CrossNet", this.connection + " received: " + objectString );
-				} else if ( Log.TRACE ) {
-					Log.trace( "CrossNet", this.connection + " received: " + objectString );
-				}
 			}
 
 			this.connection.notifyReceived( message );

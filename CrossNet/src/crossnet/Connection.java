@@ -171,6 +171,17 @@ public class Connection {
 	 * @param message
 	 */
 	void notifyReceived( Message message ) {
+		// Log
+		if ( Log.DEBUG ) {
+			String objectString = message.getClass().getSimpleName();
+			if ( !( message instanceof FrameworkMessage ) ) {
+				Log.debug( "CrossNet", this + " received: " + objectString );
+			} else if ( Log.TRACE ) {
+				Log.trace( "CrossNet", this + " received: " + objectString );
+			}
+		}
+
+		// Handle
 		if ( message instanceof KeepAliveMessage ) {
 			// Ignore
 			return;

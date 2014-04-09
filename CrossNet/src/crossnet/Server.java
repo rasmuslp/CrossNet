@@ -17,7 +17,6 @@ import crossnet.listener.ListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.MessageParser;
-import crossnet.message.framework.FrameworkMessage;
 import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.RegisterMessage;
 
@@ -292,26 +291,17 @@ public class Server extends LocalEndPoint {
 		}
 	}
 
-	private void read( SelectionKey key ) {
+	private static void read( SelectionKey key ) {
 		Connection connection = (Connection) key.attachment();
 
 		if ( connection != null ) {
 			try {
+				// Read all the Messages !
 				while ( true ) {
 					Message message = connection.getTransportLayer().read();
 					if ( message == null ) {
 						// No more messages could be read.
 						break;
-					}
-
-					//TODO Review this.
-					if ( Log.DEBUG ) {
-						String objectString = message.getClass().getSimpleName();
-						if ( !( message instanceof FrameworkMessage ) ) {
-							Log.debug( "CrossNet", connection + " received: " + objectString );
-						} else if ( Log.TRACE ) {
-							Log.trace( "CrossNet", connection + " received: " + objectString );
-						}
 					}
 
 					connection.notifyReceived( message );
@@ -324,13 +314,12 @@ public class Server extends LocalEndPoint {
 				}
 				connection.close();
 			}
-
 		} else {
 			Log.error( "CrossNet", "Server cannot write when Connection is null." );
 		}
 	}
 
-	private void write( SelectionKey key ) {
+	private static void write( SelectionKey key ) {
 		Connection connection = (Connection) key.attachment();
 
 		if ( connection != null ) {
@@ -344,7 +333,6 @@ public class Server extends LocalEndPoint {
 				}
 				connection.close();
 			}
-
 		} else {
 			Log.error( "CrossNet", "Server cannot write when Connection is null." );
 		}
@@ -353,7 +341,7 @@ public class Server extends LocalEndPoint {
 	/**
 	 * Allows the Connections used by this to be subclassed.
 	 */
-	protected Connection newConnection() {
+	protected static Connection newConnection() {
 		return new Connection();
 	}
 
