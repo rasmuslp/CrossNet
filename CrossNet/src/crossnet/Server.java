@@ -155,10 +155,10 @@ public class Server extends LocalEndPoint {
 							this.accept( key );
 						}
 						if ( key.isReadable() ) {
-							this.read( key );
+							Server.read( key );
 						}
 						if ( key.isWritable() ) {
-							this.write( key );
+							Server.write( key );
 						}
 					} catch ( CancelledKeyException e ) {
 						Connection connection = (Connection) key.attachment();
@@ -262,7 +262,7 @@ public class Server extends LocalEndPoint {
 			}
 
 			// Create and initialise Connection
-			Connection connection = this.newConnection();
+			Connection connection = Server.newConnection();
 			TransportLayer transportLayer = new TcpTransportLayer( connection, this.messageParser );
 			connection.initialize( transportLayer );
 
@@ -303,7 +303,6 @@ public class Server extends LocalEndPoint {
 						// No more messages could be read.
 						break;
 					}
-
 					connection.notifyReceived( message );
 				}
 			} catch ( IOException e ) {
@@ -347,15 +346,6 @@ public class Server extends LocalEndPoint {
 
 	public List< Connection > getConnections() {
 		return this.connections;
-	}
-
-	public void send( int connectionID, Message message ) {
-		for ( Connection connection : this.connections ) {
-			if ( connection.getID() == connectionID ) {
-				connection.send( message );
-				break;
-			}
-		}
 	}
 
 	public void sendToAllExcept( int connectionID, Message message ) {

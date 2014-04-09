@@ -169,9 +169,6 @@ public class Client extends LocalEndPoint {
 			if ( this.connection.getTransportLayer().isTimedOut( time ) ) {
 				Log.debug( "CrossNet", this.connection + " timed out." );
 				this.close();
-			} else {
-				this.ping();
-				this.keepAlive();
 			}
 			if ( this.connection.getTransportLayer().isIdle() ) {
 				this.connection.notifyIdle();
@@ -349,6 +346,15 @@ public class Client extends LocalEndPoint {
 	 */
 	private void write() throws IOException {
 		this.connection.getTransportLayer().write();
+	}
+
+	/**
+	 * Gets the Connection to the {@link Server}.
+	 * 
+	 * @return The Connection to the {@link Server}.
+	 */
+	public Connection getConnection() {
+		return this.connection;
 	}
 
 }

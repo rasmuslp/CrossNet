@@ -33,10 +33,21 @@ public class Connection {
 		this.transportLayer = transportLayer;
 	}
 
-	public void setID( final int id ) {
+	/**
+	 * Sets the ID.
+	 * 
+	 * @param id
+	 *            The new ID.
+	 */
+	void setID( final int id ) {
 		this.id = id;
 	}
 
+	/**
+	 * Gets the ID.
+	 * 
+	 * @return The ID.
+	 */
 	public int getID() {
 		return this.id;
 	}
@@ -46,7 +57,7 @@ public class Connection {
 		return this.sendInternal( dataMessage );
 	}
 
-	public int sendInternal( Message message ) {
+	int sendInternal( Message message ) {
 		if ( message == null ) {
 			throw new IllegalArgumentException( "Cannot send null." );
 		}

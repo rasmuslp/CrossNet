@@ -26,7 +26,7 @@ public abstract class TransportLayer {
 	protected volatile long lastReadTime;
 	protected volatile long lastWriteTime;
 
-	public TransportLayer( final Connection connection, final PacketFactory packetFactory, final MessageParser messageParser ) {
+	TransportLayer( final Connection connection, final PacketFactory packetFactory, final MessageParser messageParser ) {
 		this.connection = connection;
 		this.packetFactory = packetFactory;
 		this.messageParser = messageParser;
@@ -84,10 +84,10 @@ public abstract class TransportLayer {
 	 */
 	public abstract int send( Message message ) throws IOException;
 
-	public abstract Message read() throws IOException;
+	abstract Message read() throws IOException;
 
-	public abstract void write() throws IOException;
+	abstract void write() throws IOException;
 
-	public abstract void close();
+	abstract void close();
 
 }

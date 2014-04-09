@@ -23,7 +23,7 @@ public class TcpTransportLayer extends TransportLayer {
 		super( connection, new LengthPacketFactory(), messageParser );
 	}
 
-	public SelectionKey accept( Selector selector, SocketChannel socketChannel ) throws IOException {
+	SelectionKey accept( Selector selector, SocketChannel socketChannel ) throws IOException {
 		this.writeBuffer.clear();
 		this.readBuffer.clear();
 
@@ -46,7 +46,7 @@ public class TcpTransportLayer extends TransportLayer {
 
 	}
 
-	public void connect( Selector selector, SocketAddress remoteAddress, int timeout ) throws IOException {
+	void connect( Selector selector, SocketAddress remoteAddress, int timeout ) throws IOException {
 		this.close();
 		this.writeBuffer.clear();
 		this.readBuffer.clear();
@@ -161,7 +161,7 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	@Override
-	public Message read() throws IOException {
+	Message read() throws IOException {
 		if ( this.socketChannel == null ) {
 			throw new SocketException( "Connection is closed." );
 		}
@@ -184,7 +184,7 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	@Override
-	public void write() throws IOException {
+	void write() throws IOException {
 		synchronized ( this.writeLock ) {
 			if ( this.writeToSocket() ) {
 				// Write successful, clear OP_WRITE.
@@ -217,7 +217,7 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	@Override
-	public void close() {
+	void close() {
 		try {
 			if ( this.socketChannel != null ) {
 				this.socketChannel.close();
