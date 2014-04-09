@@ -105,6 +105,19 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	@Override
+	public boolean needsPing( long time ) {
+		if ( this.socketChannel == null ) {
+			return false;
+		}
+
+		if ( this.pingMillis > 0 && time - this.pingSendTime > this.pingMillis ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
 	public String getRemoteAddress() {
 		if ( this.socketChannel != null ) {
 			if ( this.socketChannel.socket() != null ) {

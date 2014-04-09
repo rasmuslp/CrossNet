@@ -45,7 +45,7 @@ public class Server extends LocalEndPoint {
 	private ServerSocketChannel serverSocketChannel;
 
 	/**
-	 * The Server listener.
+	 * The Server listener. Forwards all events.
 	 */
 	protected ListenerHandler listenerHandler = new ListenerHandler() {
 
@@ -189,8 +189,8 @@ public class Server extends LocalEndPoint {
 			if ( connection.getTransportLayer().isTimedOut( time ) ) {
 				Log.debug( "CrossNet", connection + " timed out." );
 			} else {
-				if ( connection.needsPing( time ) ) {
-					connection.updatePingRoundTripTime();
+				if ( connection.getTransportLayer().needsPing( time ) ) {
+					connection.getTransportLayer().updatePingRoundTripTime();
 				} else if ( connection.getTransportLayer().needsKeepAlive( time ) ) {
 					KeepAliveMessage keepAliveMessage = new KeepAliveMessage();
 					connection.sendInternal( keepAliveMessage );
@@ -247,8 +247,8 @@ public class Server extends LocalEndPoint {
 	private void ping() {
 		long time = System.currentTimeMillis();
 		for ( Connection connection : this.connections ) {
-			if ( connection.needsPing( time ) ) {
-				connection.updatePingRoundTripTime();
+			if ( connection.getTransportLayer().needsPing( time ) ) {
+				connection.getTransportLayer().updatePingRoundTripTime();
 			}
 		}
 	}

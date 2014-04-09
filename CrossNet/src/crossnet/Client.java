@@ -278,8 +278,8 @@ public class Client extends LocalEndPoint {
 		}
 
 		long time = System.currentTimeMillis();
-		if ( this.connection.needsPing( time ) ) {
-			this.connection.updatePingRoundTripTime();
+		if ( this.connection.getTransportLayer().needsPing( time ) ) {
+			this.connection.getTransportLayer().updatePingRoundTripTime();
 		}
 	}
 
