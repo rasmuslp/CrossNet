@@ -22,7 +22,7 @@ import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.RegisterMessage;
 import crossnet.packet.PacketFactory;
 
-public class Server implements LocalEndPoint {
+public class Server extends LocalEndPoint {
 
 	private final PacketFactory packetFactory;
 	private final MessageParser messageParser;
@@ -34,13 +34,7 @@ public class Server implements LocalEndPoint {
 	//TODO: Use a Map of ID -> Connection instead ?
 	private List< Connection > connections = new ArrayList<>();
 
-	private final Object updateLock = new Object();
-	private Thread updateThread;
-
 	private ServerSocketChannel serverSocketChannel;
-
-	private volatile boolean threadRunning = false;
-	private volatile boolean shutdownThread = false;
 
 	private ListenerHandler listenerHandler = new ListenerHandler() {
 
@@ -69,45 +63,12 @@ public class Server implements LocalEndPoint {
 	@Override
 	public void start( String threadName ) {
 		if ( this.threadRunning ) {
-			Log.trace( "CrossNet", "Server thread already running." );
+			Log.trace( "CrossNet", "Update thread already running." );
 			return;
 		}
 
 		this.threadRunning = true;
 		new Thread( this, threadName ).start();
-	}
-
-	@Override
-	public void run() {
-		Log.trace( "CrossNet", "Server thread started." );
-		this.shutdownThread = false;
-		while ( !this.shutdownThread ) {
-			try {
-				this.update( 100 );
-			} catch ( IOException e ) {
-				Log.error( "CrossNet", "Error updating server connections.", e );
-			}
-		}
-		this.threadRunning = false;
-		Log.trace( "CrossNet", "Server thread stopped." );
-	}
-
-	@Override
-	public Thread getUpdateThread() {
-		return this.updateThread;
-	}
-
-	@Override
-	public void stop() {
-		if ( this.shutdownThread ) {
-			Log.trace( "CrossNet", "Server thread shutdown already in progress." );
-			return;
-		}
-
-		Log.trace( "CrossNet", "Server thread shutting down." );
-		// Close open connections
-		this.close();
-		this.shutdownThread = true;
 	}
 
 	@Override

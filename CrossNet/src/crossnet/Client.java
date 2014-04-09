@@ -25,17 +25,11 @@ import crossnet.packet.PacketFactory;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class Client implements LocalEndPoint {
+public class Client extends LocalEndPoint {
 
 	private final Connection connection;
 
 	private final Selector selector;
-
-	private final Object updateLock = new Object();
-	private Thread updateThread;
-
-	private volatile boolean threadRunning = false;
-	private volatile boolean shutdownThread = false;
 
 	private InetAddress connectHost;
 	private int connectPort;
@@ -61,7 +55,7 @@ public class Client implements LocalEndPoint {
 	@Override
 	public void start( String threadName ) {
 		if ( this.threadRunning ) {
-			Log.trace( "CrossNet", "Client thread already running." );
+			Log.trace( "CrossNet", "Update thread already running." );
 			this.shutdownThread = true;
 			try {
 				this.updateThread.join( 5000 );
@@ -76,41 +70,6 @@ public class Client implements LocalEndPoint {
 		this.updateThread.start();
 
 		this.threadRunning = true;
-	}
-
-	@Override
-	public void run() {
-		Log.trace( "CrossNet", "Client thread started." );
-		this.shutdownThread = false;
-		while ( !this.shutdownThread ) {
-			try {
-				this.update( 100 );
-			} catch ( IOException e ) {
-				Log.error( "CrossNet", "Unable to update connection.", e );
-				this.close();
-			}
-		}
-		this.threadRunning = false;
-		Log.trace( "CrossNet", "Client thread stopped." );
-	}
-
-	@Override
-	public Thread getUpdateThread() {
-		return this.updateThread;
-	}
-
-	@Override
-	public void stop() {
-		if ( this.shutdownThread ) {
-			Log.trace( "CrossNet", "Client thread shutdown already in progress." );
-			return;
-		}
-
-		Log.trace( "CrossNet", "Server thread shutting down." );
-		// Close open connections
-		this.close();
-		this.shutdownThread = true;
-		this.selector.wakeup();
 	}
 
 	@Override
