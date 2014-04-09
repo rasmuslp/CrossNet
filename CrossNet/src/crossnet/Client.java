@@ -25,10 +25,9 @@ import crossnet.packet.PacketFactory;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class Client extends Connection implements LocalEndPoint {
+public class Client implements LocalEndPoint {
 
-	private final PacketFactory packetFactory;
-	private final MessageParser messageParser;
+	private final Connection connection;
 
 	private final Selector selector;
 
@@ -46,11 +45,10 @@ public class Client extends Connection implements LocalEndPoint {
 	private final Object registrationLock = new Object();
 
 	public Client( final PacketFactory packetFactory, final MessageParser messageParser ) {
-		this.packetFactory = packetFactory;
-		this.messageParser = messageParser;
+		TransportLayer transportLayer = new TcpTransportLayer( packetFactory, messageParser );
 
-		TransportLayer transportLayer = new TcpTransportLayer( this.packetFactory, this.messageParser );
-		this.initialize( transportLayer );
+		this.connection = new Connection();
+		this.connection.initialize( transportLayer );
 
 		try {
 			this.selector = Selector.open();
@@ -117,7 +115,7 @@ public class Client extends Connection implements LocalEndPoint {
 
 	@Override
 	public void close() {
-		super.close();
+		this.connection.close();
 		// Select one last time to complete closing the socket.
 		//TODO: Wake selector in try-catch ?
 	}
@@ -130,13 +128,13 @@ public class Client extends Connection implements LocalEndPoint {
 
 	@Override
 	public void addListener( Listener listener ) {
-		super.addListener( listener );
+		this.connection.addListener( listener );
 		Log.trace( "CrossNet", "Client listener added." );
 	}
 
 	@Override
 	public void removeListener( Listener listener ) {
-		super.removeListener( listener );
+		this.connection.removeListener( listener );
 		Log.trace( "CrossNet", "Client listener removed." );
 	}
 
@@ -186,17 +184,17 @@ public class Client extends Connection implements LocalEndPoint {
 			}
 		}
 
-		if ( this.isConnected() ) {
+		if ( this.connection.isConnected() ) {
 			long time = System.currentTimeMillis();
-			if ( this.getTransportLayer().isTimedOut( time ) ) {
-				Log.debug( "CrossNet", this + " timed out." );
+			if ( this.connection.getTransportLayer().isTimedOut( time ) ) {
+				Log.debug( "CrossNet", this.connection + " timed out." );
 				this.close();
 			} else {
 				this.ping();
 				this.keepAlive();
 			}
-			if ( this.getTransportLayer().isIdle() ) {
-				this.notifyIdle();
+			if ( this.connection.getTransportLayer().isIdle() ) {
+				this.connection.notifyIdle();
 			}
 		}
 	}
@@ -220,7 +218,7 @@ public class Client extends Connection implements LocalEndPoint {
 		Log.info( "CrossNet", "Connecting to " + this.connectHost + ":" + this.connectPort );
 
 		// Clear ID
-		this.setID( -1 );
+		this.connection.setID( -1 );
 
 		try {
 			long timeoutEnd;
@@ -230,7 +228,7 @@ public class Client extends Connection implements LocalEndPoint {
 				timeoutEnd = System.currentTimeMillis() + this.connectTimeout;
 				SocketAddress socketAddress = new InetSocketAddress( this.connectHost, this.connectPort );
 				//TODO About TCP timeout on connect ?
-				TcpTransportLayer tcpTransportLayer = (TcpTransportLayer) this.getTransportLayer();
+				TcpTransportLayer tcpTransportLayer = (TcpTransportLayer) this.connection.getTransportLayer();
 				tcpTransportLayer.connect( this.selector, socketAddress, 5000 );
 			}
 
@@ -265,25 +263,25 @@ public class Client extends Connection implements LocalEndPoint {
 	}
 
 	private void ping() {
-		if ( !this.isConnected() ) {
+		if ( !this.connection.isConnected() ) {
 			return;
 		}
 
 		long time = System.currentTimeMillis();
-		if ( this.needsPing( time ) ) {
-			this.updatePingRoundTripTime();
+		if ( this.connection.needsPing( time ) ) {
+			this.connection.updatePingRoundTripTime();
 		}
 	}
 
 	private void keepAlive() {
-		if ( !this.isConnected() ) {
+		if ( !this.connection.isConnected() ) {
 			return;
 		}
 
 		long time = System.currentTimeMillis();
-		if ( this.getTransportLayer().needsKeepAlive( time ) ) {
+		if ( this.connection.getTransportLayer().needsKeepAlive( time ) ) {
 			KeepAliveMessage keepAliveMessage = new KeepAliveMessage();
-			super.sendInternal( keepAliveMessage );
+			this.connection.sendInternal( keepAliveMessage );
 		}
 	}
 
@@ -293,7 +291,7 @@ public class Client extends Connection implements LocalEndPoint {
 
 	private void read( SelectionKey key ) throws IOException {
 		while ( true ) {
-			Message message = this.getTransportLayer().read( this );
+			Message message = this.connection.getTransportLayer().read( this.connection );
 			if ( message == null ) {
 				// No more messages could be read.
 				break;
@@ -302,18 +300,18 @@ public class Client extends Connection implements LocalEndPoint {
 			if ( !this.registered ) {
 				if ( message instanceof RegisterMessage ) {
 					RegisterMessage registerMessage = (RegisterMessage) message;
-					this.setID( registerMessage.getConnectionID() );
+					this.connection.setID( registerMessage.getConnectionID() );
 					synchronized ( this.registrationLock ) {
 						this.registered = true;
 						this.registrationLock.notifyAll();
-						Log.trace( "CrossNet", this + " received: RegisterMessage" );
-						this.setConnected( true );
+						Log.trace( "CrossNet", this.connection + " received: RegisterMessage" );
+						this.connection.setConnected( true );
 					}
-					this.notifyConnected();
+					this.connection.notifyConnected();
 				}
 				continue;
 			}
-			if ( !this.isConnected() ) {
+			if ( !this.connection.isConnected() ) {
 				continue;
 			}
 
@@ -321,18 +319,18 @@ public class Client extends Connection implements LocalEndPoint {
 			if ( Log.DEBUG ) {
 				String objectString = message == null ? "null" : message.getClass().getSimpleName();
 				if ( !( message instanceof FrameworkMessage ) ) {
-					Log.debug( "CrossNet", this + " received: " + objectString );
+					Log.debug( "CrossNet", this.connection + " received: " + objectString );
 				} else if ( Log.TRACE ) {
-					Log.trace( "CrossNet", this + " received: " + objectString );
+					Log.trace( "CrossNet", this.connection + " received: " + objectString );
 				}
 			}
 
-			this.notifyReceived( message );
+			this.connection.notifyReceived( message );
 		}
 	}
 
 	private void write( SelectionKey key ) throws IOException {
-		this.getTransportLayer().write();
+		this.connection.getTransportLayer().write();
 	}
 
 }
