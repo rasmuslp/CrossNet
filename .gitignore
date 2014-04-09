@@ -1,0 +1,8 @@
+# Generic
+*.DS_Store
+.com.apple.timemachine.supported
+*~
+
+# Java specific
+*.class
+*/bin
