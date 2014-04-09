@@ -22,11 +22,7 @@ import crossnet.packet.PacketFactory;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class TcpSocketClientConnection implements ClientConnection {
-
-	protected final static int LOBBY_PORT = 3000;
-	protected final static int ASSET_PORT = 3001;
-	protected final static int GAME_PORT = 3002;
+public class Client implements Runnable {
 
 	private final PacketFactory packetFactory;
 
@@ -43,7 +39,7 @@ public class TcpSocketClientConnection implements ClientConnection {
 
 	private Queue< ByteBuffer > sendQueue = new ConcurrentLinkedQueue<>();
 
-	public TcpSocketClientConnection( PacketFactory packetFactory, InetAddress hostAddress ) throws IOException {
+	public Client( PacketFactory packetFactory, InetAddress hostAddress ) throws IOException {
 		this.packetFactory = packetFactory;
 		this.hostAddress = hostAddress;
 
@@ -103,7 +99,7 @@ public class TcpSocketClientConnection implements ClientConnection {
 		this.lobbyChannel.configureBlocking( false );
 
 		// Start connecting
-		InetSocketAddress inetSocketAddress = new InetSocketAddress( this.hostAddress, LOBBY_PORT );
+		InetSocketAddress inetSocketAddress = new InetSocketAddress( this.hostAddress, 3000 );
 		this.lobbyChannel.connect( inetSocketAddress );
 
 		// Register the SocketChannel for connection completion
@@ -204,7 +200,6 @@ public class TcpSocketClientConnection implements ClientConnection {
 		}
 	}
 
-	@Override
 	public void send( Packet packet ) {
 		ByteBuffer writeBuffer = ByteBuffer.wrap( packet.getData() );
 		this.sendQueue.add( writeBuffer );

@@ -22,18 +22,18 @@ import crossnet.packet.PacketFactory;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public abstract class AbstractTcpSocketServerConnection implements ServerConnection {
+public class Server implements Runnable {
 
 	private final PacketFactory packetFactory;
 	private final Selector selector;
-	private final List< TcpSocketClient > clients = new ArrayList<>();
+	private final List< ClientConnection > connections = new ArrayList<>();
 
 	private volatile boolean running = false;
 	private volatile boolean shutdown = false;
 
 	private ServerSocketChannel serverSocketChannel;
 
-	public AbstractTcpSocketServerConnection( PacketFactory packetFactory ) throws IOException {
+	public Server( PacketFactory packetFactory ) throws IOException {
 		this.packetFactory = packetFactory;
 
 		// Create Selector
@@ -57,7 +57,7 @@ public abstract class AbstractTcpSocketServerConnection implements ServerConnect
 		// Wake selector to immediately be able to accept new connections.
 		this.selector.wakeup();
 
-		this.serverStartedListening();
+		Server.serverStartedListening();
 	}
 
 	public void start( String name ) {
@@ -67,7 +67,7 @@ public abstract class AbstractTcpSocketServerConnection implements ServerConnect
 
 		new Thread( this, name ).start();
 		this.running = true;
-		this.serverStarted();
+		Server.serverStarted();
 	}
 
 	public void stop() {
@@ -80,7 +80,7 @@ public abstract class AbstractTcpSocketServerConnection implements ServerConnect
 
 	private void shutdown() {
 		this.running = false;
-		this.serverShutDown();
+		Server.serverShutDown();
 	}
 
 	@Override
@@ -90,9 +90,9 @@ public abstract class AbstractTcpSocketServerConnection implements ServerConnect
 
 		while ( !this.shutdown ) {
 			try {
-				for ( TcpSocketClient client : this.clients ) {
-					if ( client.getSocketChannel().isConnected() && !client.getSendQueue().isEmpty() ) {
-						SelectionKey key = client.getSocketChannel().keyFor( this.selector );
+				for ( ClientConnection connection : this.connections ) {
+					if ( connection.getSocketChannel().isConnected() && !connection.getSendQueue().isEmpty() ) {
+						SelectionKey key = connection.getSocketChannel().keyFor( this.selector );
 						key.interestOps( SelectionKey.OP_WRITE );
 					}
 				}
@@ -136,38 +136,38 @@ public abstract class AbstractTcpSocketServerConnection implements ServerConnect
 		socketChannel.configureBlocking( false );
 
 		// Create and store Client
-		TcpSocketClient client = new TcpSocketClient( this, socketChannel, 1024 );
-		this.clients.add( client );
+		ClientConnection connection = new ClientConnection( this, socketChannel, 1024 );
+		this.connections.add( connection );
 
 		// Notify
-		this.clientConnected( client );
+		Server.connectionConnected( connection );
 
 		// Register for read events
-		socketChannel.register( this.selector, SelectionKey.OP_READ, client );
+		socketChannel.register( this.selector, SelectionKey.OP_READ, connection );
 	}
 
 	private void clientDisconnect( SelectionKey selectionKey ) {
 		// Get Client object
-		TcpSocketClient client = (TcpSocketClient) selectionKey.attachment();
+		ClientConnection connection = (ClientConnection) selectionKey.attachment();
 
 		// Remove references
 		selectionKey.cancel();
-		this.clients.remove( client );
+		this.connections.remove( connection );
 		try {
-			client.getSocketChannel().close();
+			connection.getSocketChannel().close();
 		} catch ( IOException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		// Notify
-		this.clientDisconnected( client );
+		Server.connectionDisconnected( connection );
 	}
 
 	private void read( SelectionKey key ) {
-		TcpSocketClient client = (TcpSocketClient) key.attachment();
-		ByteBuffer readBuffer = client.getReadBuffer();
-		SocketChannel socketChannel = client.getSocketChannel();
+		ClientConnection connection = (ClientConnection) key.attachment();
+		ByteBuffer readBuffer = connection.getReadBuffer();
+		SocketChannel socketChannel = connection.getSocketChannel();
 
 		try {
 			int bytesRead = socketChannel.read( readBuffer );
@@ -187,14 +187,14 @@ public abstract class AbstractTcpSocketServerConnection implements ServerConnect
 
 		// Notify
 		for ( Packet packet : packetsRead ) {
-			this.receivedPacketFromClient( client, packet );
+			Server.receivedPacketFromConnection( connection, packet );
 		}
 	}
 
 	private void write( SelectionKey key ) {
-		TcpSocketClient client = (TcpSocketClient) key.attachment();
-		Queue< ByteBuffer > sendQueue = client.getSendQueue();
-		SocketChannel socketChannel = client.getSocketChannel();
+		ClientConnection connection = (ClientConnection) key.attachment();
+		Queue< ByteBuffer > sendQueue = connection.getSendQueue();
+		SocketChannel socketChannel = connection.getSocketChannel();
 
 		try {
 			// Send a batch of data
@@ -230,24 +230,39 @@ public abstract class AbstractTcpSocketServerConnection implements ServerConnect
 
 	}
 
-	@Override
-	public void send( Client client, Packet packet ) {
-		client.send( packet );
+	public static void send( ClientConnection connection, Packet packet ) {
+		connection.send( packet );
 	}
 
 	public void wakeup() {
 		this.selector.wakeup();
 	}
 
-	protected abstract void serverStarted();
+	protected static void connectionConnected( ClientConnection connection ) {
+		Log.info( "Client connected: " + connection.getSocketChannel().socket().getRemoteSocketAddress() );
 
-	protected abstract void serverShutDown();
+	}
 
-	protected abstract void serverStartedListening();
+	protected static void connectionDisconnected( ClientConnection connection ) {
+		Log.info( "Client disconnected: " + connection.getSocketChannel().socket().getRemoteSocketAddress() );
 
-	protected abstract void clientConnected( TcpSocketClient client );
+	}
 
-	protected abstract void clientDisconnected( TcpSocketClient client );
+	protected static void receivedPacketFromConnection( ClientConnection connection, Packet packet ) {
+		byte[] data = packet.getData();
+		String string = new String( data );
+		Log.info( "Received message from client: " + connection.getSocketChannel().socket().getRemoteSocketAddress() + " message: " + string );
+	}
 
-	protected abstract void receivedPacketFromClient( TcpSocketClient client, Packet packet );
+	protected static void serverStarted() {
+		Log.info( "Server started" );
+	}
+
+	protected static void serverShutDown() {
+		Log.info( "Server shut down" );
+	}
+
+	protected static void serverStartedListening() {
+		Log.info( "Server started listening" );
+	}
 }
