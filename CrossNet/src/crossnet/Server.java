@@ -304,7 +304,7 @@ public class Server extends LocalEndPoint {
 
 					//TODO Review this.
 					if ( Log.DEBUG ) {
-						String objectString = message == null ? "null" : message.getClass().getSimpleName();
+						String objectString = message.getClass().getSimpleName();
 						if ( !( message instanceof FrameworkMessage ) ) {
 							Log.debug( "CrossNet", connection + " received: " + objectString );
 						} else if ( Log.TRACE ) {

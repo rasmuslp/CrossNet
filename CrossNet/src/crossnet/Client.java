@@ -128,12 +128,10 @@ public class Client extends LocalEndPoint {
 					keyIterator.remove();
 
 					try {
-						if ( key.isConnectable() ) {
-							this.completeConnection( key );
-						} else if ( key.isReadable() ) {
-							this.read( key );
+						if ( key.isReadable() ) {
+							this.read();
 						} else if ( key.isWritable() ) {
-							this.write( key );
+							this.write();
 						}
 					} catch ( CancelledKeyException e ) {
 						// Connection closed.
@@ -244,11 +242,7 @@ public class Client extends LocalEndPoint {
 		}
 	}
 
-	private void completeConnection( SelectionKey key ) {
-
-	}
-
-	private void read( SelectionKey key ) throws IOException {
+	private void read() throws IOException {
 		while ( true ) {
 			Message message = this.connection.getTransportLayer().read( this.connection );
 			if ( message == null ) {
@@ -276,7 +270,7 @@ public class Client extends LocalEndPoint {
 
 			//TODO Review this.
 			if ( Log.DEBUG ) {
-				String objectString = message == null ? "null" : message.getClass().getSimpleName();
+				String objectString = message.getClass().getSimpleName();
 				if ( !( message instanceof FrameworkMessage ) ) {
 					Log.debug( "CrossNet", this.connection + " received: " + objectString );
 				} else if ( Log.TRACE ) {
@@ -288,7 +282,7 @@ public class Client extends LocalEndPoint {
 		}
 	}
 
-	private void write( SelectionKey key ) throws IOException {
+	private void write() throws IOException {
 		this.connection.getTransportLayer().write();
 	}
 
