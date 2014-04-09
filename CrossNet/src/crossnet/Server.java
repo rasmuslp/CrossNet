@@ -263,8 +263,6 @@ public class Server extends LocalEndPoint {
 
 			// Create and initialze Connection
 			Connection connection = this.newConnection();
-			TransportLayer transportLayer = new TcpTransportLayer( this.packetFactory, this.messageParser );
-			connection.initialize( transportLayer );
 			int id = this.connectionIDGenetator.getNextConnectionID();
 			connection.setID( id );
 
@@ -352,7 +350,10 @@ public class Server extends LocalEndPoint {
 	 * Allows the Connections used by this to be subclassed.
 	 */
 	protected Connection newConnection() {
-		return new Connection();
+		TransportLayer transportLayer = new TcpTransportLayer( this.packetFactory, this.messageParser );
+		Connection connection = new Connection( transportLayer );
+
+		return connection;
 	}
 
 	public List< Connection > getConnections() {

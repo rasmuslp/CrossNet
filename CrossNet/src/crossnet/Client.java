@@ -41,8 +41,7 @@ public class Client extends LocalEndPoint {
 	public Client( final PacketFactory packetFactory, final MessageParser messageParser ) {
 		TransportLayer transportLayer = new TcpTransportLayer( packetFactory, messageParser );
 
-		this.connection = new Connection();
-		this.connection.initialize( transportLayer );
+		this.connection = new Connection( transportLayer );
 
 		try {
 			this.selector = Selector.open();

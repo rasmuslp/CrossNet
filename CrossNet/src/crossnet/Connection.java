@@ -17,7 +17,7 @@ public class Connection {
 
 	private String name;
 
-	private TransportLayer transportLayer;
+	private final TransportLayer transportLayer;
 
 	private volatile boolean isConnected;
 
@@ -28,7 +28,7 @@ public class Connection {
 
 	private ListenerHandler listenerHandler = new ListenerHandler();
 
-	void initialize( final TransportLayer transportLayer ) {
+	public Connection( final TransportLayer transportLayer ) {
 		this.transportLayer = transportLayer;
 	}
 
