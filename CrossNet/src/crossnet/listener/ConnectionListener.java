@@ -9,7 +9,7 @@ import crossnet.message.Message;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public interface Listener {
+public interface ConnectionListener {
 
 	/**
 	 * New connection connected.

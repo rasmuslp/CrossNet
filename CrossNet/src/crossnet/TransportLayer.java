@@ -106,8 +106,8 @@ public abstract class TransportLayer {
 		this.connection = connection;
 		this.packetFactory = packetFactory;
 		this.messageParser = messageParser;
-		this.readBuffer = ByteBuffer.allocate( this.packetFactory.getMaxLength() );
-		this.writeBuffer = ByteBuffer.allocate( this.packetFactory.getMaxLength() );
+		this.readBuffer = ByteBuffer.allocate( this.packetFactory.getMaxPacketSize() );
+		this.writeBuffer = ByteBuffer.allocate( this.packetFactory.getMaxPacketSize() );
 	}
 
 	/**

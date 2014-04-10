@@ -15,7 +15,7 @@ public class FrameworkMessageParser implements MessageParser {
 	private MessageParser tieredMessageParser;
 
 	public Message parsePacket( Packet packet ) {
-		return this.parseData( packet.getData() );
+		return this.parseData( packet.getPayload() );
 	}
 
 	@Override

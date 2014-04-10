@@ -153,7 +153,7 @@ public class Client implements Runnable {
 
 		// TODO: Notify / send somewhere
 		for ( Packet packet : packetsRead ) {
-			byte[] data = packet.getData();
+			byte[] data = packet.getPayload();
 			String string = new String( data );
 			Log.info( string );
 			// Echoing as a start
@@ -201,7 +201,7 @@ public class Client implements Runnable {
 	}
 
 	public void send( Packet packet ) {
-		ByteBuffer writeBuffer = ByteBuffer.wrap( packet.getData() );
+		ByteBuffer writeBuffer = ByteBuffer.wrap( packet.getPayload() );
 		this.sendQueue.add( writeBuffer );
 		this.selector.wakeup();
 	}

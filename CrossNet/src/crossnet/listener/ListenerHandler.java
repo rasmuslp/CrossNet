@@ -15,7 +15,7 @@ import crossnet.message.Message;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class ListenerHandler implements Listener {
+public class ListenerHandler implements ConnectionListener {
 
 	/**
 	 * Lock for adding and removing listeners.
@@ -25,73 +25,73 @@ public class ListenerHandler implements Listener {
 	/**
 	 * The listeners registered with this.
 	 */
-	protected final List< Listener > listeners = new ArrayList<>();
+	protected final List< ConnectionListener > connectionListeners = new ArrayList<>();
 
 	/**
-	 * Adds a listener. A Listener cannot be added multiple times.
+	 * Adds a listener. A listener cannot be added multiple times.
 	 * 
-	 * @param listener
-	 *            The Listener to add.
+	 * @param connectionListener
+	 *            The listener to add.
 	 */
-	public void addListener( Listener listener ) {
-		if ( listener == null ) {
-			throw new IllegalArgumentException( "Listener cannot be null." );
+	public void addConnectionListener( ConnectionListener connectionListener ) {
+		if ( connectionListener == null ) {
+			throw new IllegalArgumentException( "ConnectionListener cannot be null." );
 		}
 
 		synchronized ( this.lock ) {
-			if ( this.listeners.contains( listener ) ) {
+			if ( this.connectionListeners.contains( connectionListener ) ) {
 				return;
 			}
 
-			this.listeners.add( listener );
+			this.connectionListeners.add( connectionListener );
 		}
 	}
 
 	/**
-	 * Removes a Listener.
+	 * Removes a listener.
 	 * 
-	 * @param listener
-	 *            The Listener to remove.
+	 * @param connectionListener
+	 *            The listener to remove.
 	 */
-	public void removeListener( Listener listener ) {
-		if ( listener == null ) {
-			throw new IllegalArgumentException( "Listener cannot be null." );
+	public void removeConnectionListener( ConnectionListener connectionListener ) {
+		if ( connectionListener == null ) {
+			throw new IllegalArgumentException( "ConnectionListener cannot be null." );
 		}
 
 		synchronized ( this.lock ) {
-			if ( !this.listeners.contains( listener ) ) {
+			if ( !this.connectionListeners.contains( connectionListener ) ) {
 				return;
 			}
 
-			this.listeners.remove( listener );
+			this.connectionListeners.remove( connectionListener );
 		}
 	}
 
 	@Override
 	public void connected( Connection connection ) {
-		for ( Listener listener : this.listeners ) {
-			listener.connected( connection );
+		for ( ConnectionListener connectionListener : this.connectionListeners ) {
+			connectionListener.connected( connection );
 		}
 	}
 
 	@Override
 	public void disconnected( Connection connection ) {
-		for ( Listener listener : this.listeners ) {
-			listener.disconnected( connection );
+		for ( ConnectionListener connectionListener : this.connectionListeners ) {
+			connectionListener.disconnected( connection );
 		}
 	}
 
 	@Override
 	public void received( Connection connection, Message message ) {
-		for ( Listener listener : this.listeners ) {
-			listener.received( connection, message );
+		for ( ConnectionListener connectionListener : this.connectionListeners ) {
+			connectionListener.received( connection, message );
 		}
 	}
 
 	@Override
 	public void idle( Connection connection ) {
-		for ( Listener listener : this.listeners ) {
-			listener.idle( connection );
+		for ( ConnectionListener connectionListener : this.connectionListeners ) {
+			connectionListener.idle( connection );
 		}
 	}
 

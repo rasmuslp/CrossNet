@@ -149,7 +149,7 @@ public class TcpTransportLayer extends TransportLayer {
 			return null;
 		}
 
-		return this.messageParser.parseData( packet.getData() );
+		return this.messageParser.parseData( packet.getPayload() );
 	}
 
 	@Override

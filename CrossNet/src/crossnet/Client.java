@@ -11,7 +11,7 @@ import java.nio.channels.Selector;
 import java.util.Iterator;
 import java.util.Set;
 
-import crossnet.listener.Listener;
+import crossnet.listener.ConnectionListener;
 import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.MessageParser;
@@ -109,14 +109,14 @@ public class Client extends LocalEndPoint {
 	}
 
 	@Override
-	public void addListener( Listener listener ) {
-		this.connection.addListener( listener );
+	public void addConnectionListener( ConnectionListener connectionListener ) {
+		this.connection.addConnectionListener( connectionListener );
 		Log.trace( "CrossNet", "Client listener added." );
 	}
 
 	@Override
-	public void removeListener( Listener listener ) {
-		this.connection.removeListener( listener );
+	public void removeConnectionListener( ConnectionListener connectionListener ) {
+		this.connection.removeConnectionListener( connectionListener );
 		Log.trace( "CrossNet", "Client listener removed." );
 	}
 

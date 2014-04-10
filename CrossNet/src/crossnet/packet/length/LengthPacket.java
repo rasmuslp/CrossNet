@@ -6,20 +6,40 @@ import crossnet.log.Log;
 import crossnet.packet.Packet;
 import crossnet.util.ByteArrayWriter;
 
+/**
+ * The LengthPacket is a Packet that has a 2B header, which denotes the number of bytes following the header, that is
+ * this Packet's payload.
+ * 
+ * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
+ * 
+ */
 public class LengthPacket extends Packet {
 
-	public final static int MAX_DATA = 65535;
-	public final static int MAX_LENGTH = 2 + LengthPacket.MAX_DATA;
+	/**
+	 * Maximum payload size.
+	 */
+	public final static int MAX_PAYLOAD_SIZE = 65535;
 
-	protected LengthPacket( byte[] data ) {
-		super( data );
+	/**
+	 * Maximum packet size.
+	 */
+	public final static int MAX_PACKET_SIZE = 2 + LengthPacket.MAX_PAYLOAD_SIZE;
 
-		if ( data == null ) {
+	/**
+	 * Create a Packet with payload.
+	 * 
+	 * @param payload
+	 *            The payload.
+	 */
+	protected LengthPacket( final byte[] payload ) {
+		super( payload );
+
+		if ( payload == null ) {
 			throw new IllegalArgumentException( "Data cannot be null" );
 		}
 
-		if ( data.length > LengthPacket.MAX_DATA ) {
-			throw new IllegalArgumentException( "Data too large. Is " + data.length + "B, but maximum is: " + LengthPacket.MAX_DATA + "B." );
+		if ( payload.length > LengthPacket.MAX_PAYLOAD_SIZE ) {
+			throw new IllegalArgumentException( "Data too large. Is " + payload.length + "B, but maximum is: " + LengthPacket.MAX_PAYLOAD_SIZE + "B." );
 		}
 	}
 
@@ -29,10 +49,10 @@ public class LengthPacket extends Packet {
 
 		try {
 			// 2B header that describes the length of the payload
-			byteArrayWriter.writeShort( this.data.length );
+			byteArrayWriter.writeShort( this.payload.length );
 
 			// Payload
-			byteArrayWriter.writeByteArray( this.data );
+			byteArrayWriter.writeByteArray( this.payload );
 
 			return byteArrayWriter.toByteArray();
 		} catch ( IOException e ) {

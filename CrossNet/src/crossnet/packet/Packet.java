@@ -1,6 +1,10 @@
 package crossnet.packet;
 
+import crossnet.TransportLayer;
+
 /**
+ * Packet to be sent over a {@link TransportLayer}.
+ * <p>
  * Immutable.
  * 
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
@@ -8,10 +12,19 @@ package crossnet.packet;
  */
 public abstract class Packet {
 
-	protected final byte[] data;
+	/**
+	 * The payload this packet carries.
+	 */
+	protected final byte[] payload;
 
-	protected Packet( final byte[] data ) {
-		this.data = data;
+	/**
+	 * Create a Packet with payload.
+	 * 
+	 * @param payload
+	 *            The payload.
+	 */
+	protected Packet( final byte[] payload ) {
+		this.payload = payload;
 	}
 
 	/**
@@ -19,13 +32,15 @@ public abstract class Packet {
 	 * 
 	 * @return The payload.
 	 */
-	public byte[] getData() {
-		return this.data.clone();
+	public byte[] getPayload() {
+		return this.payload.clone();
 	}
 
 	/**
 	 * Gets the full representation of this Packet. That is, the payload plus any additional headers and or
 	 * terminators.
+	 * <p>
+	 * May return null if the Packet couldn't be serialised.
 	 * 
 	 * @return The full representation.
 	 */

@@ -7,16 +7,22 @@ import java.util.List;
 import crossnet.packet.Packet;
 import crossnet.packet.PacketFactory;
 
+/**
+ * Creates {@link LFLFPacket}s.
+ * 
+ * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
+ * 
+ */
 public class LFLFPacketFactory implements PacketFactory {
 
 	@Override
-	public int getMaxData() {
-		return LFLFPacket.MAX_DATA;
+	public int getMaxPayloadSize() {
+		return LFLFPacket.MAX_PAYLOAD_SIZE;
 	}
 
 	@Override
-	public int getMaxLength() {
-		return LFLFPacket.MAX_LENGTH;
+	public int getMaxPacketSize() {
+		return LFLFPacket.MAX_PACKET_SIZE;
 	}
 
 	@Override

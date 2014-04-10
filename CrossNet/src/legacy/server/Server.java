@@ -249,7 +249,7 @@ public class Server implements Runnable {
 	}
 
 	protected static void receivedPacketFromConnection( ClientConnection connection, Packet packet ) {
-		byte[] data = packet.getData();
+		byte[] data = packet.getPayload();
 		String string = new String( data );
 		Log.info( "Received message from client: " + connection.getSocketChannel().socket().getRemoteSocketAddress() + " message: " + string );
 	}

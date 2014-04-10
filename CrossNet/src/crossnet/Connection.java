@@ -2,7 +2,7 @@ package crossnet;
 
 import java.io.IOException;
 
-import crossnet.listener.Listener;
+import crossnet.listener.ConnectionListener;
 import crossnet.listener.ListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
@@ -118,27 +118,27 @@ public class Connection {
 	}
 
 	/**
-	 * Adds a Listener. A Listener cannot be added multiple times.
+	 * Adds a ConnectionListener. A ConnectionListener cannot be added multiple times.
 	 * 
-	 * @param listener
-	 *            The Listener to add.
+	 * @param connectionListener
+	 *            The ConnectionListener to add.
 	 */
-	void addListener( Listener listener ) {
-		this.listenerHandler.addListener( listener );
+	void addConnectionListener( ConnectionListener connectionListener ) {
+		this.listenerHandler.addConnectionListener( connectionListener );
 	}
 
 	/**
-	 * Removes a Listener.
+	 * Removes a ConnectionListener.
 	 * 
-	 * @param listener
-	 *            The Listener to remove.
+	 * @param connectionListener
+	 *            The ConnectionListener to remove.
 	 */
-	void removeListener( Listener listener ) {
-		this.listenerHandler.removeListener( listener );
+	void removeConnectionListener( ConnectionListener connectionListener ) {
+		this.listenerHandler.removeConnectionListener( connectionListener );
 	}
 
 	/**
-	 * Notify the {@link Listener}s of this, that it is now connected.
+	 * Notify the {@link ConnectionListener}s of this, that it is now connected.
 	 */
 	void notifyConnected() {
 		if ( Log.INFO ) {
@@ -151,21 +151,21 @@ public class Connection {
 	}
 
 	/**
-	 * Notify the {@link Listener}s of this, that it is now disconnected.
+	 * Notify the {@link ConnectionListener}s of this, that it is now disconnected.
 	 */
 	void notifyDisconnected() {
 		this.listenerHandler.disconnected( this );
 	}
 
 	/**
-	 * Notify the {@link Listener}s of this, that it is now idle.
+	 * Notify the {@link ConnectionListener}s of this, that it is now idle.
 	 */
 	void notifyIdle() {
 		this.listenerHandler.idle( this );
 	}
 
 	/**
-	 * Notify the {@link Listener}s of this, that it received a Message.
+	 * Notify the {@link ConnectionListener}s of this, that it received a Message.
 	 * <p>
 	 * KeepAlive messages are filtered.
 	 * <p>

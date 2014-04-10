@@ -1,9 +1,10 @@
-package crossnet.listener;
+package crossnet.test;
 
 import crossnet.Connection;
+import crossnet.listener.ConnectionListenerAdapter;
 import crossnet.message.Message;
 
-public class DefaultListener implements Listener {
+public class DefaultListener extends ConnectionListenerAdapter {
 
 	@Override
 	public void connected( Connection connection ) {
@@ -19,11 +20,6 @@ public class DefaultListener implements Listener {
 	@Override
 	public void received( Connection connection, Message message ) {
 		System.out.println( connection + " received: " + message.getClass().getSimpleName() );
-	}
-
-	@Override
-	public void idle( Connection connection ) {
-		//System.out.println( connection + " idle." );
 	}
 
 }

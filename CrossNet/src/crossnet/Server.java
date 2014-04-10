@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import crossnet.listener.Listener;
+import crossnet.listener.ConnectionListener;
 import crossnet.listener.ListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
@@ -126,14 +126,14 @@ public class Server extends LocalEndPoint {
 	}
 
 	@Override
-	public void addListener( Listener listener ) {
-		this.listenerHandler.addListener( listener );
+	public void addConnectionListener( ConnectionListener connectionListener ) {
+		this.listenerHandler.addConnectionListener( connectionListener );
 		Log.trace( "CrossNet", "Server listener added." );
 	}
 
 	@Override
-	public void removeListener( Listener listener ) {
-		this.listenerHandler.removeListener( listener );
+	public void removeConnectionListener( ConnectionListener connectionListener ) {
+		this.listenerHandler.removeConnectionListener( connectionListener );
 		Log.trace( "CrossNet", "Server listener removed." );
 	}
 
@@ -304,7 +304,7 @@ public class Server extends LocalEndPoint {
 			int id = this.connectionIDGenetator.getNextConnectionID();
 			connection.setID( id );
 
-			connection.addListener( this.listenerHandler );
+			connection.addConnectionListener( this.listenerHandler );
 
 			// Make TCP accept and attach Connection to SelectionKey
 			TcpTransportLayer tcpTransportLayer = (TcpTransportLayer) connection.getTransportLayer();

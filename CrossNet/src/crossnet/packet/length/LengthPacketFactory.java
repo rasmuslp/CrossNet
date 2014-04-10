@@ -9,16 +9,22 @@ import crossnet.packet.Packet;
 import crossnet.packet.PacketFactory;
 import crossnet.util.ByteArrayReader;
 
+/**
+ * Creates {@link LengthPacket}s.
+ * 
+ * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
+ * 
+ */
 public class LengthPacketFactory implements PacketFactory {
 
 	@Override
-	public int getMaxData() {
-		return LengthPacket.MAX_DATA;
+	public int getMaxPayloadSize() {
+		return LengthPacket.MAX_PAYLOAD_SIZE;
 	}
 
 	@Override
-	public int getMaxLength() {
-		return LengthPacket.MAX_LENGTH;
+	public int getMaxPacketSize() {
+		return LengthPacket.MAX_PACKET_SIZE;
 	}
 
 	@Override

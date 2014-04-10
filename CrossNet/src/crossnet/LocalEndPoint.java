@@ -2,7 +2,7 @@ package crossnet;
 
 import java.io.IOException;
 
-import crossnet.listener.Listener;
+import crossnet.listener.ConnectionListener;
 import crossnet.log.Log;
 
 /**
@@ -102,20 +102,20 @@ public abstract class LocalEndPoint implements Runnable {
 	public abstract void dispose() throws IOException;
 
 	/**
-	 * Adds a Listener. A Listener cannot be added multiple times.
+	 * Adds a listener. A listener cannot be added multiple times.
 	 * 
-	 * @param listener
-	 *            The Listener to add.
+	 * @param connectionListener
+	 *            The ConnectionListener to add.
 	 */
-	public abstract void addListener( Listener listener );
+	public abstract void addConnectionListener( ConnectionListener connectionListener );
 
 	/**
-	 * Removes a Listener.
+	 * Removes a listener.
 	 * 
-	 * @param listener
-	 *            The Listener to remove.
+	 * @param connectionListener
+	 *            The ConnectionListener to remove.
 	 */
-	public abstract void removeListener( Listener listener );
+	public abstract void removeConnectionListener( ConnectionListener connectionListener );
 
 	/**
 	 * Updates the network state.

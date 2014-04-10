@@ -37,7 +37,7 @@ public class ClientConnection {
 	}
 
 	public void send( Packet packet ) {
-		ByteBuffer writeBuffer = ByteBuffer.wrap( packet.getData() );
+		ByteBuffer writeBuffer = ByteBuffer.wrap( packet.getPayload() );
 		this.sendQueue.add( writeBuffer );
 
 		this.server.wakeup();

@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import crossnet.Client;
-import crossnet.listener.DefaultListener;
 import crossnet.log.Log;
 import crossnet.log.LogLevel;
 import crossnet.message.MessageParser;
@@ -19,7 +18,7 @@ public class TestClient {
 		MessageParser messageParser = new FrameworkMessageParser();
 
 		Client client = new Client( messageParser );
-		client.addListener( new DefaultListener() );
+		client.addConnectionListener( new DefaultListener() );
 		client.start( "Client" );
 		client.connect( InetAddress.getByName( "hs.rlponline.dk" ), 55100, 5000 );
 
