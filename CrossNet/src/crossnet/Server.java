@@ -20,6 +20,12 @@ import crossnet.message.MessageParser;
 import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.RegisterMessage;
 
+/**
+ * Server for CrossNet.
+ * 
+ * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
+ * 
+ */
 public class Server extends LocalEndPoint {
 
 	/**

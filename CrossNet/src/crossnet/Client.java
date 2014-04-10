@@ -19,6 +19,7 @@ import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.RegisterMessage;
 
 /**
+ * Client for CrossNet.
  * 
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
@@ -221,7 +222,7 @@ public class Client extends LocalEndPoint {
 				SocketAddress socketAddress = new InetSocketAddress( this.connectHost, this.connectPort );
 
 				TcpTransportLayer tcpTransportLayer = (TcpTransportLayer) this.connection.getTransportLayer();
-				tcpTransportLayer.connect( this.selector, socketAddress, 5000 );
+				tcpTransportLayer.connect( this.selector, socketAddress );
 			}
 
 			synchronized ( this.registrationLock ) {
