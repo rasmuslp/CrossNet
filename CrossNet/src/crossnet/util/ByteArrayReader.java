@@ -4,6 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+/**
+ * Wrapper reader class for a byte[].
+ * 
+ * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
+ * 
+ */
 public class ByteArrayReader {
 
 	private final ByteArrayInputStream byteArrayInputStream;
@@ -42,10 +48,15 @@ public class ByteArrayReader {
 		return this.dataInputStream.readLong();
 	}
 
+	public int bytesAvailable() throws IOException {
+		return this.dataInputStream.available();
+	}
+
 	/**
 	 * Reads for the length of data.
 	 * 
 	 * @param data
+	 *            The byte array to fill with data.
 	 * @throws IOException
 	 */
 	public void readByteArray( byte[] data ) throws IOException {

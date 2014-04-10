@@ -4,6 +4,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+/**
+ * Wrapper writer class for a byte[].
+ * 
+ * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
+ * 
+ */
 public class ByteArrayWriter {
 
 	private final ByteArrayOutputStream byteArrayOutputStream;
