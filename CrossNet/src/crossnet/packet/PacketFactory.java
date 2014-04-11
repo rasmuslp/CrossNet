@@ -1,7 +1,6 @@
 package crossnet.packet;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 
 /**
  * Creates {@link Packet}s with payload from byte arrays and {@link ByteBuffer}s.
@@ -46,7 +45,5 @@ public interface PacketFactory {
 	 * @return A freshly parsed Packet.
 	 */
 	public Packet parseData( ByteBuffer byteBuffer );
-
-	public List< Packet > parseDataList( ByteBuffer byteBuffer );
 
 }

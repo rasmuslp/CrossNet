@@ -183,7 +183,15 @@ public class Server implements Runnable {
 			return;
 		}
 
-		List< Packet > packetsRead = this.packetFactory.parseDataList( readBuffer );
+		// Read packets
+		List< Packet > packetsRead = new ArrayList<>();
+		while ( true ) {
+			Packet packet = this.packetFactory.parseData( readBuffer );
+			if ( packet == null ) {
+				break;
+			}
+			packetsRead.add( packet );
+		}
 
 		// Notify
 		for ( Packet packet : packetsRead ) {

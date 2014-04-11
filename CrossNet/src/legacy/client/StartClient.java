@@ -6,7 +6,7 @@ import java.net.InetAddress;
 import crossnet.log.Log;
 import crossnet.log.LogLevel;
 import crossnet.packet.Packet;
-import crossnet.packet.lflf.LFLFPacket;
+import crossnet.packet.PacketFactory;
 import crossnet.packet.lflf.LFLFPacketFactory;
 
 public class StartClient {
@@ -15,12 +15,14 @@ public class StartClient {
 		Log.set( LogLevel.TRACE );
 		Log.info( "Client starting" );
 
-		Client client = new Client( new LFLFPacketFactory(), InetAddress.getByName( "localhost" ) );
+		PacketFactory packetFactory = new LFLFPacketFactory();
+
+		Client client = new Client( packetFactory, InetAddress.getByName( "localhost" ) );
 		Thread thread = new Thread( client, "Client" );
 		thread.start();
 
 		try {
-			Packet packet = new LFLFPacket( "Hello server!".getBytes() );
+			Packet packet = packetFactory.newPacket( "Hello server!".getBytes() );
 			while ( true ) {
 				client.send( packet );
 				Thread.sleep( 100 );

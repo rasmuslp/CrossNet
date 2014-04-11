@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -149,7 +150,15 @@ public class Client implements Runnable {
 			return;
 		}
 
-		List< Packet > packetsRead = this.packetFactory.parseDataList( this.readBuffer );
+		// Read packets
+		List< Packet > packetsRead = new ArrayList<>();
+		while ( true ) {
+			Packet packet = this.packetFactory.parseData( this.readBuffer );
+			if ( packet == null ) {
+				break;
+			}
+			packetsRead.add( packet );
+		}
 
 		// TODO: Notify / send somewhere
 		for ( Packet packet : packetsRead ) {
@@ -201,7 +210,7 @@ public class Client implements Runnable {
 	}
 
 	public void send( Packet packet ) {
-		ByteBuffer writeBuffer = ByteBuffer.wrap( packet.getPayload() );
+		ByteBuffer writeBuffer = ByteBuffer.wrap( packet.toBytes() );
 		this.sendQueue.add( writeBuffer );
 		this.selector.wakeup();
 	}

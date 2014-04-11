@@ -2,7 +2,6 @@ package crossnet.packet.length;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
 
 import crossnet.log.Log;
 import crossnet.packet.Packet;
@@ -34,7 +33,7 @@ public class LengthPacketFactory implements PacketFactory {
 
 	@Override
 	public Packet parseData( ByteBuffer byteBuffer ) {
-		// Prepare buffer for reading
+		// Prepare buffer for reading.
 		byteBuffer.flip();
 
 		try {
@@ -50,12 +49,10 @@ public class LengthPacketFactory implements PacketFactory {
 					byte[] payload = new byte[payloadLength];
 					byteBuffer.get( payload );
 
-					Packet packet = new LengthPacket( payload );
-
-					// Compact buffer and return Packet
+					// Compact buffer and return Packet.
 					byteBuffer.compact();
 
-					return packet;
+					return new LengthPacket( payload );
 				}
 			}
 		} catch ( IOException e ) {
@@ -63,25 +60,11 @@ public class LengthPacketFactory implements PacketFactory {
 			Log.error( "CrossNet", "Error deserializing Packet:", e );
 		}
 
-		// Return buffer in writable state (as received)
+		// Return buffer in writable state (as received).
 		byteBuffer.position( byteBuffer.limit() );
 		byteBuffer.limit( byteBuffer.capacity() );
 
 		return null;
-	}
-
-	@Override
-	public List< Packet > parseDataList( ByteBuffer byteBuffer ) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public static String bytesToHex( byte[] in ) {
-		final StringBuilder builder = new StringBuilder();
-		for ( byte b : in ) {
-			builder.append( String.format( "%02x", b ) );
-		}
-		return builder.toString();
 	}
 
 }
