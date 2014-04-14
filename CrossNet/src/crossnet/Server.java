@@ -16,7 +16,6 @@ import crossnet.listener.ConnectionListener;
 import crossnet.listener.ListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
-import crossnet.message.MessageParser;
 import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.RegisterMessage;
 
@@ -32,8 +31,6 @@ public class Server extends LocalEndPoint {
 	 * The Selector for the TCP Socket.
 	 */
 	private final Selector selector;
-
-	private final MessageParser messageParser;
 
 	/**
 	 * Generates the IDs used to identify {@link Connection}s.
@@ -64,15 +61,13 @@ public class Server extends LocalEndPoint {
 		}
 	};
 
-	public Server( final MessageParser messageParser ) {
+	public Server() {
 		try {
 			this.selector = Selector.open();
 		} catch ( IOException e ) {
 			Log.error( "CrossNet", "Error opening Selector", e );
 			throw new RuntimeException( "Error opening Selector", e );
 		}
-
-		this.messageParser = messageParser;
 	}
 
 	@Override

@@ -14,7 +14,6 @@ import java.util.Set;
 import crossnet.listener.ConnectionListener;
 import crossnet.log.Log;
 import crossnet.message.Message;
-import crossnet.message.MessageParser;
 import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.RegisterMessage;
 
@@ -62,7 +61,7 @@ public class Client extends LocalEndPoint {
 	 */
 	private volatile boolean registered = false;
 
-	public Client( final MessageParser messageParser ) {
+	public Client() {
 		try {
 			this.selector = Selector.open();
 		} catch ( IOException e ) {
@@ -71,7 +70,7 @@ public class Client extends LocalEndPoint {
 		}
 
 		this.connection = new Connection();
-		TransportLayer transportLayer = new TcpTransportLayer( this.connection, messageParser );
+		TransportLayer transportLayer = new TcpTransportLayer( this.connection, this.messageParser );
 		this.connection.initialize( transportLayer );
 	}
 

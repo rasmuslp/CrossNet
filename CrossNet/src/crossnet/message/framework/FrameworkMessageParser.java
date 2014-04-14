@@ -3,8 +3,8 @@ package crossnet.message.framework;
 import java.io.IOException;
 
 import crossnet.log.Log;
+import crossnet.message.AbstractMessageParser;
 import crossnet.message.Message;
-import crossnet.message.MessageParser;
 import crossnet.message.framework.messages.DataMessage;
 import crossnet.message.framework.messages.KeepAliveMessage;
 import crossnet.message.framework.messages.PingMessage;
@@ -17,17 +17,12 @@ import crossnet.util.ByteArrayReader;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class FrameworkMessageParser implements MessageParser {
+public class FrameworkMessageParser extends AbstractMessageParser {
 
 	/**
 	 * The possible types.
 	 */
-	private static final FrameworkMessageType[] frameworkMessageTypes = FrameworkMessageType.values();
-
-	/**
-	 * The tiered MessageParser, if any.
-	 */
-	private MessageParser tieredMessageParser;
+	private final FrameworkMessageType[] frameworkMessageTypes = FrameworkMessageType.values();
 
 	@Override
 	public Message parseData( byte[] data ) {
@@ -48,7 +43,7 @@ public class FrameworkMessageParser implements MessageParser {
 
 		FrameworkMessageType frameworkMessageType;
 		try {
-			frameworkMessageType = FrameworkMessageParser.frameworkMessageTypes[type];
+			frameworkMessageType = this.frameworkMessageTypes[type];
 		} catch ( ArrayIndexOutOfBoundsException e ) {
 			Log.error( "CrossNet", "Type not recognized: " + type + " Cannot parse." );
 			return null;
@@ -67,15 +62,16 @@ public class FrameworkMessageParser implements MessageParser {
 				message = PingMessage.parse( dataReader );
 				break;
 			case DATA:
-				message = DataMessage.parse( dataReader );
+				DataMessage dataMessage = DataMessage.parse( dataReader );
 				if ( this.tieredMessageParser != null ) {
-					message = this.tieredMessageParser.parseData( message.getBytes() );
+					message = this.tieredMessageParser.parseData( dataMessage.getData() );
 				} else {
+					message = dataMessage;
 					Log.warn( "CrossNet", "No tiered parser: Cannot parse content of DataMessage." );
 				}
 				break;
 			default:
-				Log.error( "CrossNet", "Unknown FrameworkMessageType: Cannot parse." );
+				Log.error( "CrossNet", "Unknown FrameworkMessageType, cannot parse: " + frameworkMessageType );
 				break;
 		}
 
@@ -89,22 +85,4 @@ public class FrameworkMessageParser implements MessageParser {
 
 		return message;
 	}
-
-	/**
-	 * Provide a tiered MessageParser. Useful for layered parsing.
-	 * <p>
-	 * {@link DataMessage}s are sent through the tiered MessageParser if set.
-	 */
-	@Override
-	public MessageParser setTieredMessageParser( MessageParser tieredMessageParser ) {
-		MessageParser removedTieredMessageParser = this.tieredMessageParser;
-		this.tieredMessageParser = tieredMessageParser;
-		return removedTieredMessageParser;
-	}
-
-	@Override
-	public MessageParser getTieredMessageParser() {
-		return this.tieredMessageParser;
-	}
-
 }
