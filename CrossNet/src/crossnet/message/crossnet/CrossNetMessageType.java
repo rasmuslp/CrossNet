@@ -1,14 +1,14 @@
-package crossnet.message.framework;
+package crossnet.message.crossnet;
 
 import crossnet.Connection;
 
 /**
- * The various types of {@link FrameworkMessage}s.
+ * The various types of {@link CrossNetMessage}s.
  * 
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public enum FrameworkMessageType {
+public enum CrossNetMessageType {
 
 	/**
 	 * {@link Server} sends this to {@link Client} when establishing a {@link Connection}.

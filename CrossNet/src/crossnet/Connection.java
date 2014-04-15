@@ -6,10 +6,10 @@ import crossnet.listener.ConnectionListener;
 import crossnet.listener.ListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
-import crossnet.message.framework.FrameworkMessage;
-import crossnet.message.framework.messages.DataMessage;
-import crossnet.message.framework.messages.KeepAliveMessage;
-import crossnet.message.framework.messages.PingMessage;
+import crossnet.message.crossnet.CrossNetMessage;
+import crossnet.message.crossnet.messages.DataMessage;
+import crossnet.message.crossnet.messages.KeepAliveMessage;
+import crossnet.message.crossnet.messages.PingMessage;
 
 /**
  * A Connection between a {@link Client} and a {@link Server}.
@@ -178,7 +178,7 @@ public class Connection {
 		// Log
 		if ( Log.DEBUG ) {
 			String messageClass = message.getClass().getSimpleName();
-			if ( !( message instanceof FrameworkMessage ) ) {
+			if ( !( message instanceof CrossNetMessage ) ) {
 				Log.debug( "CrossNet", this + " received: " + messageClass );
 			} else if ( Log.TRACE ) {
 				Log.trace( "CrossNet", this + " received: " + messageClass );
@@ -199,7 +199,7 @@ public class Connection {
 	/**
 	 * Send a Message through this Connection.
 	 * <p>
-	 * If the Message is not a {@link FrameworkMessage}, it will be wrapped in a {@link DataMessage} for transportation.
+	 * If the Message is not a {@link CrossNetMessage}, it will be wrapped in a {@link DataMessage} for transportation.
 	 * 
 	 * @param message
 	 *            The Message to send.
@@ -212,7 +212,7 @@ public class Connection {
 
 		String messageClass = message.getClass().getSimpleName();
 		boolean wrapped = false;
-		if ( !( message instanceof FrameworkMessage ) ) {
+		if ( !( message instanceof CrossNetMessage ) ) {
 			// Wrap message in DataMessage
 			byte[] messageData = message.getBytes();
 			message = new DataMessage( messageData );

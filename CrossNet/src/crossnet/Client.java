@@ -14,8 +14,8 @@ import java.util.Set;
 import crossnet.listener.ConnectionListener;
 import crossnet.log.Log;
 import crossnet.message.Message;
-import crossnet.message.framework.messages.KeepAliveMessage;
-import crossnet.message.framework.messages.RegisterMessage;
+import crossnet.message.crossnet.messages.KeepAliveMessage;
+import crossnet.message.crossnet.messages.RegisterMessage;
 
 /**
  * Client for CrossNet.

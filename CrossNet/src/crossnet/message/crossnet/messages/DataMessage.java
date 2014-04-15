@@ -1,13 +1,14 @@
-package crossnet.message.framework.messages;
+package crossnet.message.crossnet.messages;
 
 import java.io.IOException;
 
 import crossnet.Connection;
 import crossnet.log.Log;
 import crossnet.message.Message;
-import crossnet.message.framework.FrameworkMessage;
-import crossnet.message.framework.FrameworkMessageType;
+import crossnet.message.crossnet.CrossNetMessage;
+import crossnet.message.crossnet.CrossNetMessageType;
 import crossnet.util.ByteArrayReader;
+import crossnet.util.ByteArrayWriter;
 
 /**
  * This is for sending raw data. Users {@link Message}s sent through a {@link Connection} is wrapped in this.
@@ -15,7 +16,7 @@ import crossnet.util.ByteArrayReader;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class DataMessage extends FrameworkMessage {
+public class DataMessage extends CrossNetMessage {
 
 	/**
 	 * The payload.
@@ -29,7 +30,7 @@ public class DataMessage extends FrameworkMessage {
 	 *            The payload.
 	 */
 	public DataMessage( final byte[] data ) {
-		super( FrameworkMessageType.DATA );
+		super( CrossNetMessageType.DATA );
 		this.data = data;
 	}
 
@@ -43,8 +44,8 @@ public class DataMessage extends FrameworkMessage {
 	}
 
 	@Override
-	protected byte[] serializePayload() {
-		return this.data;
+	protected void serializePayload( ByteArrayWriter to ) throws IOException {
+		to.writeByteArray( this.data );
 	}
 
 	/**

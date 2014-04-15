@@ -1,10 +1,10 @@
-package crossnet.message.framework.messages;
+package crossnet.message.crossnet.messages;
 
 import java.io.IOException;
 
 import crossnet.log.Log;
-import crossnet.message.framework.FrameworkMessage;
-import crossnet.message.framework.FrameworkMessageType;
+import crossnet.message.crossnet.CrossNetMessage;
+import crossnet.message.crossnet.CrossNetMessageType;
 import crossnet.util.ByteArrayReader;
 import crossnet.util.ByteArrayWriter;
 
@@ -14,7 +14,7 @@ import crossnet.util.ByteArrayWriter;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class PingMessage extends FrameworkMessage {
+public class PingMessage extends CrossNetMessage {
 
 	/**
 	 * Signals if this is a request or a response.
@@ -33,7 +33,7 @@ public class PingMessage extends FrameworkMessage {
 	 *            The ID.
 	 */
 	public PingMessage( final int id ) {
-		super( FrameworkMessageType.PING );
+		super( CrossNetMessageType.PING );
 		this.id = id;
 	}
 
@@ -44,7 +44,7 @@ public class PingMessage extends FrameworkMessage {
 	 * @param id
 	 */
 	private PingMessage( boolean isReply, final int id ) {
-		super( FrameworkMessageType.PING );
+		super( CrossNetMessageType.PING );
 		this.isReply = isReply;
 		this.id = id;
 	}
@@ -75,11 +75,9 @@ public class PingMessage extends FrameworkMessage {
 	}
 
 	@Override
-	protected byte[] serializePayload() throws IOException {
-		ByteArrayWriter byteArrayWriter = new ByteArrayWriter();
-		byteArrayWriter.writeBoolean( this.isReply );
-		byteArrayWriter.writeInt( this.id );
-		return byteArrayWriter.toByteArray();
+	protected void serializePayload( ByteArrayWriter to ) throws IOException {
+		to.writeBoolean( this.isReply );
+		to.writeInt( this.id );
 	}
 
 	/**

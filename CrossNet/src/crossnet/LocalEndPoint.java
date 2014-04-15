@@ -6,7 +6,7 @@ import crossnet.listener.ConnectionListener;
 import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.MessageParser;
-import crossnet.message.framework.FrameworkMessageParser;
+import crossnet.message.crossnet.CrossNetMessageParser;
 
 /**
  * The local end point that manages communication.
@@ -17,9 +17,9 @@ import crossnet.message.framework.FrameworkMessageParser;
 public abstract class LocalEndPoint implements Runnable {
 
 	/**
-	 * The MessageParser for the framework {@link Message}s.
+	 * The MessageParser for the CrossNet {@link Message}s.
 	 */
-	protected final MessageParser messageParser = new FrameworkMessageParser();
+	protected final MessageParser messageParser = new CrossNetMessageParser();
 
 	/**
 	 * {@code True} iff the update thread is running.
@@ -42,9 +42,9 @@ public abstract class LocalEndPoint implements Runnable {
 	protected Thread updateThread;
 
 	/**
-	 * Gets the MessageParser for the framework {@link Message}s.
+	 * Gets the MessageParser for the CrossNet {@link Message}s.
 	 * 
-	 * @return The MessageParser for the framework {@link Message}s.
+	 * @return The MessageParser for the CrossNet {@link Message}s.
 	 */
 	public MessageParser getMessageParser() {
 		return this.messageParser;

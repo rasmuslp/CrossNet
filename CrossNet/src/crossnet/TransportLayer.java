@@ -6,8 +6,8 @@ import java.nio.ByteBuffer;
 import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.MessageParser;
-import crossnet.message.framework.messages.KeepAliveMessage;
-import crossnet.message.framework.messages.PingMessage;
+import crossnet.message.crossnet.messages.KeepAliveMessage;
+import crossnet.message.crossnet.messages.PingMessage;
 import crossnet.packet.Packet;
 import crossnet.packet.PacketFactory;
 

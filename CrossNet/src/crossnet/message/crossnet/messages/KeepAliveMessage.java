@@ -1,8 +1,9 @@
-package crossnet.message.framework.messages;
+package crossnet.message.crossnet.messages;
 
 import crossnet.Connection;
-import crossnet.message.framework.FrameworkMessage;
-import crossnet.message.framework.FrameworkMessageType;
+import crossnet.message.crossnet.CrossNetMessage;
+import crossnet.message.crossnet.CrossNetMessageType;
+import crossnet.util.ByteArrayWriter;
 
 /**
  * For hindering the {@link Connection} from timing out.
@@ -12,15 +13,15 @@ import crossnet.message.framework.FrameworkMessageType;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class KeepAliveMessage extends FrameworkMessage {
+public class KeepAliveMessage extends CrossNetMessage {
 
 	public KeepAliveMessage() {
-		super( FrameworkMessageType.KEEPALIVE );
+		super( CrossNetMessageType.KEEPALIVE );
 	}
 
 	@Override
-	protected byte[] serializePayload() {
-		return new byte[0];
+	protected void serializePayload( ByteArrayWriter to ) {
+		// No payload to serialise.
 	}
 
 	/**

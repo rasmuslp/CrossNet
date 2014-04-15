@@ -16,8 +16,8 @@ import crossnet.listener.ConnectionListener;
 import crossnet.listener.ListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
-import crossnet.message.framework.messages.KeepAliveMessage;
-import crossnet.message.framework.messages.RegisterMessage;
+import crossnet.message.crossnet.messages.KeepAliveMessage;
+import crossnet.message.crossnet.messages.RegisterMessage;
 
 /**
  * Server for CrossNet.

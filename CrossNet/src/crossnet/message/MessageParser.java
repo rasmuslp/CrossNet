@@ -1,6 +1,5 @@
 package crossnet.message;
 
-
 /**
  * Parses byte arrays to {@link Message}s.
  * <p>
@@ -10,17 +9,6 @@ package crossnet.message;
  * 
  */
 public interface MessageParser {
-
-	/**
-	 * Parse data and tries to construct a Message.
-	 * <p>
-	 * May return null if there was not enough data or an error occurred.
-	 * 
-	 * @param data
-	 *            The data to parse.
-	 * @return A freshly parsed Message.
-	 */
-	public Message parseData( byte[] data );
 
 	/**
 	 * Provide a tiered MessageParser. Useful for layered parsing.
@@ -37,5 +25,16 @@ public interface MessageParser {
 	 * @return The current tiered MessageParser.
 	 */
 	public MessageParser getTieredMessageParser();
+
+	/**
+	 * Parse data and tries to construct a Message.
+	 * <p>
+	 * May return null if there was not enough data or an error occurred.
+	 * 
+	 * @param data
+	 *            The data to parse.
+	 * @return A freshly parsed Message.
+	 */
+	public Message parseData( byte[] data );
 
 }

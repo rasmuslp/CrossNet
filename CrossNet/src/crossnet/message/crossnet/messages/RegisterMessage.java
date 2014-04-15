@@ -1,11 +1,11 @@
-package crossnet.message.framework.messages;
+package crossnet.message.crossnet.messages;
 
 import java.io.IOException;
 
 import crossnet.Connection;
 import crossnet.log.Log;
-import crossnet.message.framework.FrameworkMessage;
-import crossnet.message.framework.FrameworkMessageType;
+import crossnet.message.crossnet.CrossNetMessage;
+import crossnet.message.crossnet.CrossNetMessageType;
 import crossnet.util.ByteArrayReader;
 import crossnet.util.ByteArrayWriter;
 
@@ -15,7 +15,7 @@ import crossnet.util.ByteArrayWriter;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class RegisterMessage extends FrameworkMessage {
+public class RegisterMessage extends CrossNetMessage {
 
 	/**
 	 * The ID of the connection.
@@ -29,7 +29,7 @@ public class RegisterMessage extends FrameworkMessage {
 	 *            The ID.
 	 */
 	public RegisterMessage( final int connectionId ) {
-		super( FrameworkMessageType.REGISTER );
+		super( CrossNetMessageType.REGISTER );
 		this.connectionId = connectionId;
 	}
 
@@ -43,10 +43,8 @@ public class RegisterMessage extends FrameworkMessage {
 	}
 
 	@Override
-	protected byte[] serializePayload() throws IOException {
-		ByteArrayWriter byteArrayWriter = new ByteArrayWriter();
-		byteArrayWriter.writeInt( this.connectionId );
-		return byteArrayWriter.toByteArray();
+	protected void serializePayload( ByteArrayWriter to ) throws IOException {
+		to.writeInt( this.connectionId );
 	}
 
 	/**
