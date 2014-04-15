@@ -194,7 +194,7 @@ public class Server extends LocalEndPoint {
 					connection.getTransportLayer().requestPingRoundTripTimeUpdate();
 				} else if ( connection.getTransportLayer().needsKeepAlive( time ) ) {
 					KeepAliveMessage keepAliveMessage = new KeepAliveMessage();
-					connection.sendInternal( keepAliveMessage );
+					connection.send( keepAliveMessage );
 				}
 			}
 			if ( connection.getTransportLayer().isIdle() ) {
@@ -264,7 +264,7 @@ public class Server extends LocalEndPoint {
 		for ( Connection connection : this.connections ) {
 			if ( connection.getTransportLayer().needsKeepAlive( time ) ) {
 				KeepAliveMessage keepAliveMessage = new KeepAliveMessage();
-				connection.sendInternal( keepAliveMessage );
+				connection.send( keepAliveMessage );
 			}
 		}
 	}
@@ -312,7 +312,7 @@ public class Server extends LocalEndPoint {
 
 			// Start registration process
 			RegisterMessage registerMessage = new RegisterMessage( connection.getID() );
-			connection.sendInternal( registerMessage );
+			connection.send( registerMessage );
 
 			// Notify
 			connection.notifyConnected();

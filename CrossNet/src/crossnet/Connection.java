@@ -177,11 +177,11 @@ public class Connection {
 	void notifyReceived( Message message ) {
 		// Log
 		if ( Log.DEBUG ) {
-			String objectString = message.getClass().getSimpleName();
+			String messageClass = message.getClass().getSimpleName();
 			if ( !( message instanceof FrameworkMessage ) ) {
-				Log.debug( "CrossNet", this + " received: " + objectString );
+				Log.debug( "CrossNet", this + " received: " + messageClass );
 			} else if ( Log.TRACE ) {
-				Log.trace( "CrossNet", this + " received: " + objectString );
+				Log.trace( "CrossNet", this + " received: " + messageClass );
 			}
 		}
 
@@ -199,27 +199,24 @@ public class Connection {
 	/**
 	 * Send a Message through this Connection.
 	 * <p>
-	 * This Message will be wrapped in a {@link DataMessage} for transportation.
+	 * If the Message is not a {@link FrameworkMessage}, it will be wrapped in a {@link DataMessage} for transportation.
 	 * 
 	 * @param message
 	 *            The Message to send.
 	 * @return The number of bytes added to the send buffer.
 	 */
 	public int send( Message message ) {
-		DataMessage dataMessage = new DataMessage( message.getBytes() );
-		return this.sendInternal( dataMessage );
-	}
-
-	/**
-	 * Send a Message through this Connection.
-	 * 
-	 * @param message
-	 *            The Message to send.
-	 * @return The number of bytes added to the send buffer.
-	 */
-	int sendInternal( Message message ) {
 		if ( message == null ) {
 			throw new IllegalArgumentException( "Cannot send null." );
+		}
+
+		String messageClass = message.getClass().getSimpleName();
+		boolean wrapped = false;
+		if ( !( message instanceof FrameworkMessage ) ) {
+			// Wrap message in DataMessage
+			byte[] messageData = message.getBytes();
+			message = new DataMessage( messageData );
+			wrapped = true;
 		}
 
 		try {
@@ -227,11 +224,10 @@ public class Connection {
 			if ( length == 0 ) {
 				Log.trace( "CrossNet", this + " had nothing to send." );
 			} else if ( Log.DEBUG ) {
-				String messageString = message.getClass().getSimpleName();
-				if ( !( message instanceof FrameworkMessage ) ) {
-					Log.debug( "CrossNet", this + " sent: " + messageString + " (" + length + ")" );
+				if ( wrapped ) {
+					Log.debug( "CrossNet", this + " sent: " + messageClass + " (" + length + ")" );
 				} else if ( Log.TRACE ) {
-					Log.trace( "CrossNet", this + " sent: " + messageString + " (" + length + ")" );
+					Log.trace( "CrossNet", this + " sent: " + messageClass + " (" + length + ")" );
 				}
 			}
 			return length;

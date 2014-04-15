@@ -296,7 +296,7 @@ public class Client extends LocalEndPoint {
 		long time = System.currentTimeMillis();
 		if ( this.connection.getTransportLayer().needsKeepAlive( time ) ) {
 			KeepAliveMessage keepAliveMessage = new KeepAliveMessage();
-			this.connection.sendInternal( keepAliveMessage );
+			this.connection.send( keepAliveMessage );
 		}
 	}
 

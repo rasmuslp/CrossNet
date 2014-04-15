@@ -26,15 +26,15 @@ public abstract class FrameworkMessage implements Message {
 	@Override
 	public byte[] getBytes() {
 		try {
-			ByteArrayWriter byteArrayWriter = new ByteArrayWriter();
+			ByteArrayWriter out = new ByteArrayWriter();
 
 			// Write header
-			byteArrayWriter.writeByte( this.frameworkMessageType.ordinal() );
+			out.writeByte( this.frameworkMessageType.ordinal() );
 
 			// Write payload
-			byteArrayWriter.writeByteArray( this.serializePayload() );
+			out.writeByteArray( this.serializePayload() );
 
-			return byteArrayWriter.toByteArray();
+			return out.toByteArray();
 		} catch ( IOException e ) {
 			Log.error( "CrossNet", "Error serializing Message:", e );
 		}

@@ -203,7 +203,7 @@ public abstract class TransportLayer {
 	void requestPingRoundTripTimeUpdate() {
 		Message message = new PingMessage( this.pingId++ );
 		this.pingSendTime = System.currentTimeMillis();
-		this.connection.sendInternal( message );
+		this.connection.send( message );
 	}
 
 	/**
@@ -225,7 +225,7 @@ public abstract class TransportLayer {
 		} else {
 			// Otherwise, return to sender
 			pingMessage.setReply();
-			this.connection.sendInternal( pingMessage );
+			this.connection.send( pingMessage );
 			return;
 		}
 	}
