@@ -25,11 +25,6 @@ public class Connection {
 	private int id = -1;
 
 	/**
-	 * A human readable name.
-	 */
-	private String name;
-
-	/**
 	 * The TransportLayer utilised.
 	 */
 	private TransportLayer transportLayer;
@@ -68,23 +63,9 @@ public class Connection {
 		return this.id;
 	}
 
-	/**
-	 * Set a human readable name.
-	 * 
-	 * @param name
-	 *            The new name.
-	 */
-	public void setName( String name ) {
-		this.name = name;
-	}
-
 	@Override
 	public String toString() {
-		if ( this.name == null ) {
-			return "Connection " + this.id;
-		}
-
-		return this.name;
+		return "Connection " + this.id;
 	}
 
 	/**
