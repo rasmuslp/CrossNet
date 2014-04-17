@@ -20,17 +20,17 @@ public class RegisterMessage extends CrossNetMessage {
 	/**
 	 * The ID of the connection.
 	 */
-	private final int connectionId;
+	private final int id;
 
 	/**
-	 * Create new RegisterMessage with connection ID.
+	 * Create new RegisterMessage with a connection ID.
 	 * 
-	 * @param connectionId
+	 * @param id
 	 *            The ID.
 	 */
-	public RegisterMessage( final int connectionId ) {
+	public RegisterMessage( final int id ) {
 		super( CrossNetMessageType.REGISTER );
-		this.connectionId = connectionId;
+		this.id = id;
 	}
 
 	/**
@@ -38,13 +38,13 @@ public class RegisterMessage extends CrossNetMessage {
 	 * 
 	 * @return The connection ID.
 	 */
-	public int getConnectionID() {
-		return this.connectionId;
+	public int getId() {
+		return this.id;
 	}
 
 	@Override
 	protected void serializePayload( ByteArrayWriter to ) throws IOException {
-		to.writeInt( this.connectionId );
+		to.writeInt( this.id );
 	}
 
 	/**
@@ -56,8 +56,8 @@ public class RegisterMessage extends CrossNetMessage {
 	 */
 	public static RegisterMessage parse( ByteArrayReader payload ) {
 		try {
-			int connectionId = payload.readInt();
-			return new RegisterMessage( connectionId );
+			int id = payload.readInt();
+			return new RegisterMessage( id );
 		} catch ( IOException e ) {
 			Log.error( "CrossNet", "Error deserializing RegisterMessage:", e );
 		}

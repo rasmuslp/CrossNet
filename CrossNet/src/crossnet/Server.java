@@ -296,7 +296,7 @@ public class Server extends LocalEndPoint {
 			TransportLayer transportLayer = new TcpTransportLayer( connection, this.messageParser );
 			connection.initialize( transportLayer );
 
-			int id = this.connectionIDGenetator.getNextConnectionID();
+			int id = this.connectionIDGenetator.getNextId();
 			connection.setID( id );
 
 			connection.addConnectionListener( this.listenerHandler );
@@ -402,24 +402,6 @@ public class Server extends LocalEndPoint {
 	}
 
 	/**
-	 * Sends a Message to all Connections, except for the one with connectionID.
-	 * 
-	 * @param connectionID
-	 *            The ID to skip.
-	 * @param message
-	 *            The Message to send.
-	 */
-	public void sendToAllExcept( int connectionID, Message message ) {
-		for ( Connection connection : this.connections ) {
-			if ( connection.getID() == connectionID ) {
-				// Skip
-				continue;
-			}
-			connection.send( message );
-		}
-	}
-
-	/**
 	 * Broadcasts a Message to all Connections.
 	 * 
 	 * @param message
@@ -427,6 +409,24 @@ public class Server extends LocalEndPoint {
 	 */
 	public void sendToAll( Message message ) {
 		for ( Connection connection : this.connections ) {
+			connection.send( message );
+		}
+	}
+
+	/**
+	 * Sends a Message to all Connections, except for the one with ID.
+	 * 
+	 * @param id
+	 *            The ID to skip.
+	 * @param message
+	 *            The Message to send.
+	 */
+	public void sendToAllExcept( int id, Message message ) {
+		for ( Connection connection : this.connections ) {
+			if ( connection.getID() == id ) {
+				// Skip
+				continue;
+			}
 			connection.send( message );
 		}
 	}

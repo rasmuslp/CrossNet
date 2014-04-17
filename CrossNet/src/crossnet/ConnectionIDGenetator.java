@@ -10,15 +10,15 @@ package crossnet;
  */
 public class ConnectionIDGenetator {
 
-	private int nextConnectionID = 1;
+	private int nextId = 1;
 
 	/**
 	 * Gets the next unique ID.
 	 * 
 	 * @return The next unique ID.
 	 */
-	public int getNextConnectionID() {
-		return this.nextConnectionID++;
+	public int getNextId() {
+		return this.nextId++;
 	}
 
 }

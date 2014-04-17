@@ -319,7 +319,7 @@ public class Client extends LocalEndPoint {
 			if ( !this.registered ) {
 				if ( message instanceof RegisterMessage ) {
 					RegisterMessage registerMessage = (RegisterMessage) message;
-					this.connection.setID( registerMessage.getConnectionID() );
+					this.connection.setID( registerMessage.getId() );
 					synchronized ( this.registrationLock ) {
 						this.registered = true;
 						this.registrationLock.notifyAll();
