@@ -63,6 +63,10 @@ public abstract class AbstractMessageParser< E extends Enum< E > > implements Me
 
 		Message message = this.parseType( messageType, dataReader );
 
+		if ( message == null ) {
+			Log.error( "CrossNet", "Parsed Message was null. Type was: " + messageType );
+		}
+
 		try {
 			int bytesRemaining = dataReader.bytesAvailable();
 			if ( bytesRemaining > 0 ) {

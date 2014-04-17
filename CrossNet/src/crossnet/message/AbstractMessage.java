@@ -37,7 +37,7 @@ public abstract class AbstractMessage< E extends Enum< E > > implements Message 
 
 			return out.toByteArray();
 		} catch ( IOException e ) {
-			Log.error( "GLHF", "Error serializing Message:", e );
+			Log.error( "CrossNet", "Error serializing Message:", e );
 		}
 
 		return null;
