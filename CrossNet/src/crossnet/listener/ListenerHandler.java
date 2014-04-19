@@ -59,10 +59,6 @@ public class ListenerHandler implements ConnectionListener {
 		}
 
 		synchronized ( this.lock ) {
-			if ( !this.connectionListeners.contains( connectionListener ) ) {
-				return;
-			}
-
 			this.connectionListeners.remove( connectionListener );
 		}
 	}
