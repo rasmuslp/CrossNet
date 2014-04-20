@@ -7,9 +7,9 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import crossnet.listener.ConnectionListener;
@@ -38,9 +38,9 @@ public class Server extends LocalEndPoint {
 	private final ConnectionIDGenetator connectionIDGenetator = new ConnectionIDGenetator();
 
 	/**
-	 * List of the current {@link Connection}s.
+	 * Map of the current {@link Connection}s.
 	 */
-	private List< Connection > connections = new ArrayList<>();
+	private Map< Integer, Connection > connections = new HashMap<>();
 
 	/**
 	 * The socket for incoming {@link Connection}s.
@@ -87,7 +87,7 @@ public class Server extends LocalEndPoint {
 			Log.info( "CrossNet", "Closing server connections..." );
 		}
 
-		Iterator< Connection > connectionIterator = this.connections.iterator();
+		Iterator< Connection > connectionIterator = this.connections.values().iterator();
 		while ( connectionIterator.hasNext() ) {
 			Connection connection = connectionIterator.next();
 			connectionIterator.remove();
@@ -186,7 +186,7 @@ public class Server extends LocalEndPoint {
 		}
 
 		long time = System.currentTimeMillis();
-		for ( Connection connection : this.connections ) {
+		for ( Connection connection : this.connections.values() ) {
 			if ( connection.getTransportLayer().isTimedOut( time ) ) {
 				Log.debug( "CrossNet", connection + " timed out." );
 			} else {
@@ -247,7 +247,7 @@ public class Server extends LocalEndPoint {
 	 */
 	private void ping() {
 		long time = System.currentTimeMillis();
-		for ( Connection connection : this.connections ) {
+		for ( Connection connection : this.connections.values() ) {
 			if ( connection.getTransportLayer().needsPing( time ) ) {
 				connection.getTransportLayer().requestPingRoundTripTimeUpdate();
 			}
@@ -261,7 +261,7 @@ public class Server extends LocalEndPoint {
 	 */
 	private void keepAlive() {
 		long time = System.currentTimeMillis();
-		for ( Connection connection : this.connections ) {
+		for ( Connection connection : this.connections.values() ) {
 			if ( connection.getTransportLayer().needsKeepAlive( time ) ) {
 				KeepAliveMessage keepAliveMessage = new KeepAliveMessage();
 				connection.send( keepAliveMessage );
@@ -308,7 +308,7 @@ public class Server extends LocalEndPoint {
 			connection.setConnected( true );
 
 			// Store Connection
-			this.connections.add( connection );
+			this.connections.put( id, connection );
 
 			// Start registration process
 			RegisterMessage registerMessage = new RegisterMessage( connection.getID() );
@@ -397,7 +397,7 @@ public class Server extends LocalEndPoint {
 	 * 
 	 * @return The current Connections.
 	 */
-	public List< Connection > getConnections() {
+	public Map< Integer, Connection > getConnections() {
 		return this.connections;
 	}
 
@@ -408,7 +408,7 @@ public class Server extends LocalEndPoint {
 	 *            The Message to broadcast.
 	 */
 	public void sendToAll( Message message ) {
-		for ( Connection connection : this.connections ) {
+		for ( Connection connection : this.connections.values() ) {
 			connection.send( message );
 		}
 	}
@@ -422,7 +422,7 @@ public class Server extends LocalEndPoint {
 	 *            The Message to send.
 	 */
 	public void sendToAllExcept( int id, Message message ) {
-		for ( Connection connection : this.connections ) {
+		for ( Connection connection : this.connections.values() ) {
 			if ( connection.getID() == id ) {
 				// Skip
 				continue;
