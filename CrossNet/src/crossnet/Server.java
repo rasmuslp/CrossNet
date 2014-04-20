@@ -292,7 +292,7 @@ public class Server extends LocalEndPoint {
 			}
 
 			// Create and initialise Connection
-			Connection connection = Server.newConnection();
+			Connection connection = this.newConnection();
 			TransportLayer transportLayer = new TcpTransportLayer( connection, this.messageParser );
 			connection.initialize( transportLayer );
 
@@ -388,7 +388,8 @@ public class Server extends LocalEndPoint {
 	 * <p>
 	 * This construct allows the Connections used by this to be sub classed.
 	 */
-	protected static Connection newConnection() {
+	@SuppressWarnings( "static-method" )
+	protected Connection newConnection() {
 		return new Connection();
 	}
 
