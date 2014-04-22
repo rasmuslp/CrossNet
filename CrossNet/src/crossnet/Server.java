@@ -40,7 +40,7 @@ public class Server extends LocalEndPoint {
 	/**
 	 * Map of the current {@link Connection}s.
 	 */
-	private Map< Integer, Connection > connections = new HashMap<>();
+	protected Map< Integer, Connection > connections = new HashMap<>();
 
 	/**
 	 * The socket for incoming {@link Connection}s.
@@ -52,7 +52,6 @@ public class Server extends LocalEndPoint {
 	 */
 	protected ListenerHandler listenerHandler = new ListenerHandler() {
 
-		@SuppressWarnings( "synthetic-access" )
 		@Override
 		public void disconnected( Connection connection ) {
 			// Remove the reference to the disconnected Connection.
