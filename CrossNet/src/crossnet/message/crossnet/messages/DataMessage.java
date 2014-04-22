@@ -62,7 +62,7 @@ public class DataMessage extends CrossNetMessage {
 			payload.readByteArray( data );
 			return new DataMessage( data );
 		} catch ( IOException e ) {
-			Log.error( "CrossNet", "Error deserializing RegisterMessage:", e );
+			Log.error( "CrossNet", "Error deserializing DataMessage:", e );
 		}
 
 		return null;
