@@ -87,6 +87,18 @@ public class TcpTransportLayer extends TransportLayer {
 		return null;
 	}
 
+	/**
+	 * Send a Message.
+	 * <p>
+	 * NB: This will block while waiting for lock. In the case that the send buffer is empty, it will also block while
+	 * sending as much as possible.
+	 * 
+	 * @param message
+	 *            The Message to send.
+	 * @return The number of bytes added to the send buffer.
+	 * @throws IOException
+	 *             If unable to send.
+	 */
 	@Override
 	public int send( Message message ) throws IOException {
 		if ( this.socketChannel == null ) {
