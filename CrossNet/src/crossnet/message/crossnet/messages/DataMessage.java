@@ -31,6 +31,9 @@ public class DataMessage extends CrossNetMessage {
 	 */
 	public DataMessage( final byte[] data ) {
 		super( CrossNetMessageType.DATA );
+		if ( data == null ) {
+			throw new IllegalArgumentException( "Data cannot be null." );
+		}
 		this.data = data;
 	}
 
