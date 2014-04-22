@@ -10,6 +10,8 @@ import crossnet.util.ByteArrayReader;
  * 
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
+ * @param <E>
+ *            The enum describing the possible Message types.
  */
 public abstract class AbstractMessageParser< E extends Enum< E > > implements MessageParser {
 
