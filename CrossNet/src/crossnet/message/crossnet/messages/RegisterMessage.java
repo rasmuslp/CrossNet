@@ -10,7 +10,7 @@ import crossnet.util.ByteArrayReader;
 import crossnet.util.ByteArrayWriter;
 
 /**
- * {@link Server} sends this to {@link Client} when establishing a {@link Connection}.
+ * {@link Server} sends this with an ID to {@link Client} when establishing a {@link Connection}.
  * 
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
@@ -18,12 +18,12 @@ import crossnet.util.ByteArrayWriter;
 public class RegisterMessage extends CrossNetMessage {
 
 	/**
-	 * The ID of the connection.
+	 * The ID.
 	 */
 	private final int id;
 
 	/**
-	 * Create new RegisterMessage with a connection ID.
+	 * Create new RegisterMessage with an ID.
 	 * 
 	 * @param id
 	 *            The ID.
@@ -34,9 +34,7 @@ public class RegisterMessage extends CrossNetMessage {
 	}
 
 	/**
-	 * Gets the connection ID.
-	 * 
-	 * @return The connection ID.
+	 * @return The ID.
 	 */
 	public int getId() {
 		return this.id;
