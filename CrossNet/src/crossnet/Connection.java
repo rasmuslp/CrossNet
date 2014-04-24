@@ -171,7 +171,9 @@ public class Connection {
 			// Ignore
 			return;
 		} else if ( message instanceof PingMessage ) {
-			this.transportLayer.gotPingMessage( (PingMessage) message );
+			if ( !this.transportLayer.gotPingMessage( (PingMessage) message ) ) {
+				return;
+			}
 		}
 
 		this.listenerHandler.received( this, message );

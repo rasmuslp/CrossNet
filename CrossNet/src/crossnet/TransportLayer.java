@@ -211,23 +211,28 @@ public abstract class TransportLayer {
 	 * 
 	 * @param pingMessage
 	 *            The PingMessage received.
+	 * @return {@code True} iff relevant for this @ #connection} ; i.e. was a reply on a Ping this {@link #connection}
+	 *         sent.
 	 */
-	void gotPingMessage( PingMessage pingMessage ) {
+	boolean gotPingMessage( PingMessage pingMessage ) {
+		boolean notify = false;
+
 		if ( pingMessage.isReply() ) {
 			if ( pingMessage.getId() == ( this.pingId - 1 ) ) {
 				// Update RTT
 				this.pingRoundTripTime = (int) ( System.currentTimeMillis() - this.pingSendTime );
 				Log.trace( "CrossNet", this.connection + " round trip time: " + this.pingRoundTripTime );
+				notify = true;
 			} else {
 				// Ping is old, ignore
-				return;
 			}
 		} else {
 			// Otherwise, return to sender
 			pingMessage.setReply();
 			this.connection.send( pingMessage );
-			return;
 		}
+
+		return notify;
 	}
 
 	/**
