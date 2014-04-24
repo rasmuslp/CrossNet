@@ -98,6 +98,11 @@ public abstract class TransportLayer {
 	protected long pingSendTime = 0;
 
 	/**
+	 * {@code True} iff a ping request is in transit.
+	 */
+	private boolean pingInTransit = false;
+
+	/**
 	 * Last recorded round trip time.
 	 */
 	protected int pingRoundTripTime = 0;
@@ -203,6 +208,7 @@ public abstract class TransportLayer {
 	void requestPingRoundTripTimeUpdate() {
 		Message message = new PingMessage( this.pingId++ );
 		this.pingSendTime = System.currentTimeMillis();
+		this.pingInTransit = true;
 		this.connection.send( message );
 	}
 
@@ -221,6 +227,7 @@ public abstract class TransportLayer {
 			if ( pingMessage.getId() == ( this.pingId - 1 ) ) {
 				// Update RTT
 				this.pingRoundTripTime = (int) ( System.currentTimeMillis() - this.pingSendTime );
+				this.pingInTransit = false;
 				Log.trace( "CrossNet", this.connection + " round trip time: " + this.pingRoundTripTime );
 				notify = true;
 			} else {
@@ -236,11 +243,15 @@ public abstract class TransportLayer {
 	}
 
 	/**
-	 * Gets the last recorded {@link #pingRoundTripTime}.
+	 * Gets the last recorded {@link #pingRoundTripTime}. Unless a ping request is in transit. Then the time difference
+	 * between the {@link #pingSendTime} and now is returned.
 	 * 
-	 * @return the last recorded ping round trip time.
+	 * @return The ping round trip time.
 	 */
 	public int getPingRoundTripTime() {
+		if ( this.pingInTransit ) {
+			return (int) ( System.currentTimeMillis() - this.pingSendTime );
+		}
 		return this.pingRoundTripTime;
 	}
 

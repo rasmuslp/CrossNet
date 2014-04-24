@@ -155,7 +155,6 @@ public class Server extends LocalEndPoint {
 			synchronized ( selectedKeys ) {
 				Iterator< SelectionKey > keyIterator = selectedKeys.iterator();
 				while ( keyIterator.hasNext() ) {
-					this.ping();
 					this.keepAlive();
 
 					SelectionKey key = keyIterator.next();

@@ -143,7 +143,6 @@ public class Client extends LocalEndPoint {
 			synchronized ( selectedKeys ) {
 				Iterator< SelectionKey > keyIterator = selectedKeys.iterator();
 				while ( keyIterator.hasNext() ) {
-					this.ping();
 					this.keepAlive();
 
 					SelectionKey key = keyIterator.next();
@@ -169,6 +168,9 @@ public class Client extends LocalEndPoint {
 			if ( this.connection.getTransportLayer().isTimedOut( time ) ) {
 				Log.debug( "CrossNet", this.connection + " timed out." );
 				this.close();
+			} else {
+				this.ping();
+				this.keepAlive();
 			}
 			if ( this.connection.getTransportLayer().isIdle() ) {
 				this.connection.notifyIdle();
