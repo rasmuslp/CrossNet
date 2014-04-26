@@ -191,7 +191,7 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	/**
-	 * Accept an incoming connection from a {@link Client}. Used by the {@link Server}.
+	 * Accept an incoming connection from a {@link CrossNetClient}. Used by the {@link CrossNetServer}.
 	 * 
 	 * @param selector
 	 *            The selector the {@link #selectionKey} will be registered to.
@@ -224,7 +224,7 @@ public class TcpTransportLayer extends TransportLayer {
 	}
 
 	/**
-	 * Open a connection to a {@link Server}. Used by the {@link Client}.
+	 * Open a connection to a {@link CrossNetServer}. Used by the {@link CrossNetClient}.
 	 * 
 	 * @param selector
 	 *            The selector the {@link #selectionKey} will be registered to.

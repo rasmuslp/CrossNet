@@ -23,7 +23,7 @@ import crossnet.message.crossnet.messages.RegisterMessage;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class Client extends LocalEndPoint {
+public class CrossNetClient extends LocalEndPoint {
 
 	/**
 	 * The Selector for the TCP Socket.
@@ -31,7 +31,7 @@ public class Client extends LocalEndPoint {
 	private final Selector selector;
 
 	/**
-	 * The Connection to the {@link Server}.
+	 * The Connection to the {@link CrossNetServer}.
 	 */
 	private final Connection connection;
 
@@ -57,11 +57,11 @@ public class Client extends LocalEndPoint {
 	private final Object registrationLock = new Object();
 
 	/**
-	 * {@code True} iff registration with Server was successful.
+	 * {@code True} iff registration with CrossNetServer was successful.
 	 */
 	private volatile boolean registered = false;
 
-	public Client() {
+	public CrossNetClient() {
 		try {
 			this.selector = Selector.open();
 		} catch ( IOException e ) {
@@ -179,7 +179,7 @@ public class Client extends LocalEndPoint {
 	}
 
 	/**
-	 * Connects this Client to a Server.
+	 * Connects this CrossNetClient to a CrossNetServer.
 	 * <p>
 	 * As a minimal registration procedure is needed, the {@link #update(int)} method must be called on another thread
 	 * when this method is called.
@@ -236,7 +236,7 @@ public class Client extends LocalEndPoint {
 				}
 
 				if ( !this.registered ) {
-					throw new SocketTimeoutException( "Connected, but timed out during registration.\nNote: Client#update must be called in a separate thread during connect." );
+					throw new SocketTimeoutException( "Connected, but timed out during registration.\nNote: CrossNetClient#update must be called in a separate thread during connect." );
 				}
 			}
 		} catch ( IOException e ) {
@@ -264,7 +264,7 @@ public class Client extends LocalEndPoint {
 	 */
 	public void reconnect( int registrationTimeout ) throws IOException {
 		if ( this.connectHost == null ) {
-			throw new IllegalStateException( "This Client has never been connected." );
+			throw new IllegalStateException( "This CrossNetClient has never been connected." );
 		}
 		this.connect( this.connectHost, this.connectPort, registrationTimeout );
 	}
@@ -353,9 +353,9 @@ public class Client extends LocalEndPoint {
 	}
 
 	/**
-	 * Gets the Connection to the {@link Server}.
+	 * Gets the Connection to the {@link CrossNetServer}.
 	 * 
-	 * @return The Connection to the {@link Server}.
+	 * @return The Connection to the {@link CrossNetServer}.
 	 */
 	public Connection getConnection() {
 		return this.connection;

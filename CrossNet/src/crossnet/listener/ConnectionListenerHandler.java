@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import crossnet.Connection;
-import crossnet.Server;
+import crossnet.CrossNetServer;
 import crossnet.message.Message;
 
 /**
  * Redistributes events.
  * 
- * Used internally in {@link Server} and {@link Connection}.
+ * Used internally in {@link CrossNetServer} and {@link Connection}.
  * 
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class ListenerHandler implements ConnectionListener {
+public class ConnectionListenerHandler implements ConnectionListener {
 
 	/**
 	 * Lock for adding and removing listeners.

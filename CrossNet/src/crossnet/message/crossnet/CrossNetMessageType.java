@@ -11,7 +11,7 @@ import crossnet.Connection;
 public enum CrossNetMessageType {
 
 	/**
-	 * {@link Server} sends this to {@link Client} when establishing a {@link Connection}.
+	 * {@link CrossNetServer} sends this to {@link CrossNetClient} when establishing a {@link Connection}.
 	 */
 	REGISTER,
 

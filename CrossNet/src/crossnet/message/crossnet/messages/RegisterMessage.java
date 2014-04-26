@@ -10,7 +10,7 @@ import crossnet.util.ByteArrayReader;
 import crossnet.util.ByteArrayWriter;
 
 /**
- * {@link Server} sends this with an ID to {@link Client} when establishing a {@link Connection}.
+ * {@link CrossNetServer} sends this with an ID to {@link CrossNetClient} when establishing a {@link Connection}.
  * 
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 

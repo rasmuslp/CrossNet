@@ -106,8 +106,8 @@ public abstract class LocalEndPoint implements Runnable {
 	/**
 	 * Closes all {@link Connections}.
 	 * 
-	 * @see Client
-	 * @see Server
+	 * @see CrossNetClient#close()
+	 * @see CrossNetServer#close()
 	 */
 	public abstract void close();
 
@@ -137,8 +137,8 @@ public abstract class LocalEndPoint implements Runnable {
 	/**
 	 * Updates the network state.
 	 * 
-	 * @see Client#update(int)
-	 * @see Server#update(int)
+	 * @see CrossNetClient#update(int)
+	 * @see CrossNetServer#update(int)
 	 * 
 	 * @param timeout
 	 *            The maximum time to wait for data. May be zero to return immediately if there is no data to process.

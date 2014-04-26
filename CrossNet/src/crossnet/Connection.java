@@ -3,7 +3,7 @@ package crossnet;
 import java.io.IOException;
 
 import crossnet.listener.ConnectionListener;
-import crossnet.listener.ListenerHandler;
+import crossnet.listener.ConnectionListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.crossnet.CrossNetMessage;
@@ -12,7 +12,7 @@ import crossnet.message.crossnet.messages.KeepAliveMessage;
 import crossnet.message.crossnet.messages.PingMessage;
 
 /**
- * A Connection between a {@link Client} and a {@link Server}.
+ * A Connection between a {@link CrossNetClient} and a {@link CrossNetServer}.
  * 
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
@@ -37,7 +37,7 @@ public class Connection {
 	/**
 	 * The Connection listener. Forwards all events.
 	 */
-	private ListenerHandler listenerHandler = new ListenerHandler();
+	private ConnectionListenerHandler connectionListenerHandler = new ConnectionListenerHandler();
 
 	@SuppressWarnings( "hiding" )
 	final void initialize( final TransportLayer transportLayer ) {
@@ -80,7 +80,7 @@ public class Connection {
 	/**
 	 * Will return {@code true} iff the Connection is considered fully connected.
 	 * <p>
-	 * For the {@link Client}, this means that the registration procedure is completed.
+	 * For the {@link CrossNetClient}, this means that the registration procedure is completed.
 	 * 
 	 * @return {@code True} iff the Connection is considered fully connected.
 	 */
@@ -105,7 +105,7 @@ public class Connection {
 	 *            The ConnectionListener to add.
 	 */
 	void addConnectionListener( ConnectionListener connectionListener ) {
-		this.listenerHandler.addConnectionListener( connectionListener );
+		this.connectionListenerHandler.addConnectionListener( connectionListener );
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class Connection {
 	 *            The ConnectionListener to remove.
 	 */
 	void removeConnectionListener( ConnectionListener connectionListener ) {
-		this.listenerHandler.removeConnectionListener( connectionListener );
+		this.connectionListenerHandler.removeConnectionListener( connectionListener );
 	}
 
 	/**
@@ -128,21 +128,21 @@ public class Connection {
 			}
 		}
 
-		this.listenerHandler.connected( this );
+		this.connectionListenerHandler.connected( this );
 	}
 
 	/**
 	 * Notify the {@link ConnectionListener}s of this, that it is now disconnected.
 	 */
 	void notifyDisconnected() {
-		this.listenerHandler.disconnected( this );
+		this.connectionListenerHandler.disconnected( this );
 	}
 
 	/**
 	 * Notify the {@link ConnectionListener}s of this, that it is now idle.
 	 */
 	void notifyIdle() {
-		this.listenerHandler.idle( this );
+		this.connectionListenerHandler.idle( this );
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class Connection {
 			}
 		}
 
-		this.listenerHandler.received( this, message );
+		this.connectionListenerHandler.received( this, message );
 	}
 
 	/**

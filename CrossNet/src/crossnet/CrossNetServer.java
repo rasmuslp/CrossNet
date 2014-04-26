@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import crossnet.listener.ConnectionListener;
-import crossnet.listener.ListenerHandler;
+import crossnet.listener.ConnectionListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.crossnet.messages.KeepAliveMessage;
@@ -25,7 +25,7 @@ import crossnet.message.crossnet.messages.RegisterMessage;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class Server extends LocalEndPoint {
+public class CrossNetServer extends LocalEndPoint {
 
 	/**
 	 * The Selector for the TCP Socket.
@@ -48,19 +48,19 @@ public class Server extends LocalEndPoint {
 	private ServerSocketChannel serverSocketChannel;
 
 	/**
-	 * The Server listener. Forwards all events.
+	 * The CrossNetServer listener. Forwards all events.
 	 */
-	protected ListenerHandler listenerHandler = new ListenerHandler() {
+	protected ConnectionListenerHandler connectionListenerHandler = new ConnectionListenerHandler() {
 
 		@Override
 		public void disconnected( Connection connection ) {
 			// Remove the reference to the disconnected Connection.
-			Server.this.connections.remove( connection );
+			CrossNetServer.this.connections.remove( connection );
 			super.disconnected( connection );
 		}
 	};
 
-	public Server() {
+	public CrossNetServer() {
 		try {
 			this.selector = Selector.open();
 		} catch ( IOException e ) {
@@ -121,13 +121,13 @@ public class Server extends LocalEndPoint {
 
 	@Override
 	public void addConnectionListener( ConnectionListener connectionListener ) {
-		this.listenerHandler.addConnectionListener( connectionListener );
+		this.connectionListenerHandler.addConnectionListener( connectionListener );
 		Log.trace( "CrossNet", "Server listener added." );
 	}
 
 	@Override
 	public void removeConnectionListener( ConnectionListener connectionListener ) {
-		this.listenerHandler.removeConnectionListener( connectionListener );
+		this.connectionListenerHandler.removeConnectionListener( connectionListener );
 		Log.trace( "CrossNet", "Server listener removed." );
 	}
 
@@ -165,10 +165,10 @@ public class Server extends LocalEndPoint {
 							this.accept( key );
 						}
 						if ( key.isReadable() ) {
-							Server.read( key );
+							CrossNetServer.read( key );
 						}
 						if ( key.isWritable() ) {
-							Server.write( key );
+							CrossNetServer.write( key );
 						}
 					} catch ( CancelledKeyException e ) {
 						Connection connection = (Connection) key.attachment();
@@ -202,7 +202,7 @@ public class Server extends LocalEndPoint {
 	}
 
 	/**
-	 * Bind the Server to a TCP port and start listening for new connections.
+	 * Bind the CrossNetServer to a TCP port and start listening for new connections.
 	 * 
 	 * @param port
 	 *            The TCP port on which to listen.
@@ -235,7 +235,7 @@ public class Server extends LocalEndPoint {
 				throw e;
 			}
 		}
-		Log.info( "CrossNet", "Server started listening" );
+		Log.info( "CrossNet", "CrossNetServer started listening" );
 	}
 
 	/**
@@ -297,7 +297,7 @@ public class Server extends LocalEndPoint {
 			int id = this.connectionIDGenetator.getNextId();
 			connection.setID( id );
 
-			connection.addConnectionListener( this.listenerHandler );
+			connection.addConnectionListener( this.connectionListenerHandler );
 
 			// Make TCP accept and attach Connection to SelectionKey
 			TcpTransportLayer tcpTransportLayer = (TcpTransportLayer) connection.getTransportLayer();
@@ -350,7 +350,7 @@ public class Server extends LocalEndPoint {
 				connection.close();
 			}
 		} else {
-			Log.error( "CrossNet", "Server cannot write when Connection is null." );
+			Log.error( "CrossNet", "CrossNetServer cannot write when Connection is null." );
 		}
 	}
 
@@ -377,7 +377,7 @@ public class Server extends LocalEndPoint {
 				connection.close();
 			}
 		} else {
-			Log.error( "CrossNet", "Server cannot write when Connection is null." );
+			Log.error( "CrossNet", "CrossNetServer cannot write when Connection is null." );
 		}
 	}
 
