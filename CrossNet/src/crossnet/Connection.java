@@ -7,7 +7,7 @@ import crossnet.listener.ConnectionListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.crossnet.CrossNetMessage;
-import crossnet.message.crossnet.messages.DataMessage;
+import crossnet.message.crossnet.messages.TieredCrossNetMessage;
 import crossnet.message.crossnet.messages.KeepAliveMessage;
 import crossnet.message.crossnet.messages.PingMessage;
 
@@ -182,7 +182,7 @@ public class Connection {
 	/**
 	 * Send a Message through this Connection.
 	 * <p>
-	 * If the Message is not a {@link CrossNetMessage}, it will be wrapped in a {@link DataMessage} for transportation.
+	 * If the Message is not a {@link CrossNetMessage}, it will be wrapped in a {@link TieredCrossNetMessage} for transportation.
 	 * 
 	 * @param message
 	 *            The Message to send.
@@ -196,9 +196,9 @@ public class Connection {
 		String messageClass = message.getClass().getSimpleName();
 		boolean wrapped = false;
 		if ( !( message instanceof CrossNetMessage ) ) {
-			// Wrap message in DataMessage
+			// Wrap message in TieredCrossNetMessage
 			byte[] messageData = message.getBytes();
-			message = new DataMessage( messageData );
+			message = new TieredCrossNetMessage( messageData );
 			wrapped = true;
 		}
 

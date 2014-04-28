@@ -1,6 +1,8 @@
 package crossnet.message.crossnet;
 
 import crossnet.Connection;
+import crossnet.CrossNetClient;
+import crossnet.CrossNetServer;
 
 /**
  * The various types of {@link CrossNetMessage}s.
@@ -26,7 +28,7 @@ public enum CrossNetMessageType {
 	PING,
 
 	/**
-	 * For sending raw data.
+	 * For sending tiered Messages.
 	 */
-	DATA
+	TIERED
 }

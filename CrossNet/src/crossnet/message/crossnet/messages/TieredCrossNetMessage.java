@@ -16,7 +16,7 @@ import crossnet.util.ByteArrayWriter;
  * @author Rasmus Ljungmann Pedersen <rasmuslp@gmail.com>
  * 
  */
-public class DataMessage extends CrossNetMessage {
+public class TieredCrossNetMessage extends CrossNetMessage {
 
 	/**
 	 * The payload.
@@ -24,13 +24,13 @@ public class DataMessage extends CrossNetMessage {
 	private final byte[] data;
 
 	/**
-	 * Create a new DataMessage with a payload.
+	 * Create a new TieredCrossNetMessage with a payload.
 	 * 
 	 * @param data
 	 *            The payload.
 	 */
-	public DataMessage( final byte[] data ) {
-		super( CrossNetMessageType.DATA );
+	public TieredCrossNetMessage( final byte[] data ) {
+		super( CrossNetMessageType.TIERED );
 		if ( data == null ) {
 			throw new IllegalArgumentException( "Data cannot be null." );
 		}
@@ -52,20 +52,20 @@ public class DataMessage extends CrossNetMessage {
 	}
 
 	/**
-	 * Construct a DataMessage from the provided payload.
+	 * Construct a TieredCrossNetMessage from the provided payload.
 	 * 
 	 * @param payload
 	 *            The payload from which to determine the content of this.
-	 * @return A freshly parsed DataMessage.
+	 * @return A freshly parsed TieredCrossNetMessage.
 	 */
-	public static DataMessage parse( ByteArrayReader payload ) {
+	public static TieredCrossNetMessage parse( ByteArrayReader payload ) {
 		try {
 			int bytes = payload.bytesAvailable();
 			byte[] data = new byte[bytes];
 			payload.readByteArray( data );
-			return new DataMessage( data );
+			return new TieredCrossNetMessage( data );
 		} catch ( IOException e ) {
-			Log.error( "CrossNet", "Error deserializing DataMessage:", e );
+			Log.error( "CrossNet", "Error deserializing TieredCrossNetMessage:", e );
 		}
 
 		return null;
