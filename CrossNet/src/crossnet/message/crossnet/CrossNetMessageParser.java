@@ -6,7 +6,6 @@ import crossnet.message.Message;
 import crossnet.message.crossnet.messages.KeepAliveMessage;
 import crossnet.message.crossnet.messages.PingMessage;
 import crossnet.message.crossnet.messages.RegisterMessage;
-import crossnet.message.crossnet.messages.TieredCrossNetMessage;
 import crossnet.util.ByteArrayReader;
 
 /**
@@ -36,11 +35,9 @@ public class CrossNetMessageParser extends AbstractMessageParser< CrossNetMessag
 				message = PingMessage.parse( payload );
 				break;
 			case TIERED:
-				TieredCrossNetMessage tieredCrossNetMessage = TieredCrossNetMessage.parse( payload );
 				if ( this.tieredMessageParser != null ) {
-					message = this.tieredMessageParser.parseData( tieredCrossNetMessage.getData() );
+					message = this.tieredMessageParser.parseData( payload );
 				} else {
-					message = tieredCrossNetMessage;
 					Log.warn( "CrossNet", "No tiered parser: Cannot parse content of TieredCrossNetMessage." );
 				}
 				break;

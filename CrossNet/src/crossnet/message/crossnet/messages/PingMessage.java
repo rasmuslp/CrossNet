@@ -75,7 +75,7 @@ public class PingMessage extends CrossNetMessage {
 	}
 
 	@Override
-	protected void serializePayload( ByteArrayWriter to ) throws IOException {
+	protected void serializeCrossNetPayload( ByteArrayWriter to ) throws IOException {
 		to.writeBoolean( this.isReply );
 		to.writeInt( this.id );
 	}

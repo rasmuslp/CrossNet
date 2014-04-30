@@ -43,7 +43,7 @@ public class RegisterMessage extends CrossNetMessage {
 	}
 
 	@Override
-	protected void serializePayload( ByteArrayWriter to ) throws IOException {
+	protected void serializeCrossNetPayload( ByteArrayWriter to ) throws IOException {
 		to.writeInt( this.id );
 	}
 
