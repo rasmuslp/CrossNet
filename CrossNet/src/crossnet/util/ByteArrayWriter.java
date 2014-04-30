@@ -3,6 +3,7 @@ package crossnet.util;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**
  * Wrapper writer class for a byte[].
@@ -46,6 +47,21 @@ public class ByteArrayWriter {
 
 	public void writeLong( long number ) throws IOException {
 		this.dataOutputStream.writeLong( number );
+	}
+
+	/**
+	 * Converts a String to a UTF-8 byte array and writes it to the byte[].
+	 * <p>
+	 * NB: After conversion, the length must not exceed 255 bytes.
+	 * 
+	 * @param string
+	 *            The String to write.
+	 * @throws IOException
+	 */
+	public void writeString255( String string ) throws IOException {
+		byte[] stringBytes = string.getBytes( Charset.forName( "UTF-8" ) );
+		this.writeByte( stringBytes.length );
+		this.writeByteArray( stringBytes );
 	}
 
 	public void writeByteArray( byte[] data ) throws IOException {

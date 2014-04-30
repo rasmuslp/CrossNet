@@ -3,6 +3,7 @@ package crossnet.util;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**
  * Wrapper reader class for a byte[].
@@ -50,6 +51,21 @@ public class ByteArrayReader {
 
 	public int bytesAvailable() throws IOException {
 		return this.dataInputStream.available();
+	}
+
+	/**
+	 * Reads from the byte[] and converts it to an UTF-8 String.
+	 * <p>
+	 * The String to read must not exceed 255 bytes.
+	 * 
+	 * @return The read String.
+	 * @throws IOException
+	 */
+	public String readString255() throws IOException {
+		int stringLength = this.readUnsignedByte();
+		byte[] stringBytes = new byte[stringLength];
+		this.readByteArray( stringBytes );
+		return new String( stringBytes, Charset.forName( "UTF-8" ) );
 	}
 
 	/**
