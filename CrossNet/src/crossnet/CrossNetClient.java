@@ -134,7 +134,7 @@ public class CrossNetClient extends LocalEndPoint {
 			selects = this.selector.selectNow();
 		}
 		if ( selects == 0 ) {
-			if ( updateTime > 0 && ( System.currentTimeMillis() < ( updateTime + ( timeout / 2 ) ) ) ) {
+			if ( ( updateTime > 0 ) && ( System.currentTimeMillis() < ( updateTime + ( timeout / 2 ) ) ) ) {
 				Log.debug( "CrossNet", "Update got 0 selects rather quickly." );
 			}
 		} else {
@@ -227,7 +227,7 @@ public class CrossNetClient extends LocalEndPoint {
 			}
 
 			synchronized ( this.registrationLock ) {
-				while ( !this.registered && System.currentTimeMillis() < timeoutEnd ) {
+				while ( !this.registered && ( System.currentTimeMillis() < timeoutEnd ) ) {
 					try {
 						this.registrationLock.wait( 100 );
 					} catch ( InterruptedException e ) {

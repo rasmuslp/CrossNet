@@ -122,7 +122,7 @@ public abstract class TransportLayer {
 	 * @return {@code True} iff the Connection is idle.
 	 */
 	public boolean isIdle() {
-		return this.writeBuffer.position() / (float) this.writeBuffer.capacity() < this.idleThreshold;
+		return ( this.writeBuffer.position() / (float) this.writeBuffer.capacity() ) < this.idleThreshold;
 	}
 
 	/**

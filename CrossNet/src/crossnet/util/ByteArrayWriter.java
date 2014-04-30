@@ -26,7 +26,7 @@ public class ByteArrayWriter {
 	}
 
 	public void writeByte( int number ) throws IOException {
-		if ( number < Byte.MIN_VALUE || 255 < number ) {
+		if ( ( number < Byte.MIN_VALUE ) || ( 255 < number ) ) {
 			throw new IllegalArgumentException( "Number requires more than one byte: " + number );
 		}
 
@@ -34,7 +34,7 @@ public class ByteArrayWriter {
 	}
 
 	public void writeShort( int number ) throws IOException {
-		if ( number < Short.MIN_VALUE || 65535 < number ) {
+		if ( ( number < Short.MIN_VALUE ) || ( 65535 < number ) ) {
 			throw new IllegalArgumentException( "Number requires more than two bytes: " + number );
 		}
 

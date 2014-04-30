@@ -3,10 +3,10 @@ package crossnet.message.crossnet;
 import crossnet.log.Log;
 import crossnet.message.AbstractMessageParser;
 import crossnet.message.Message;
-import crossnet.message.crossnet.messages.TieredCrossNetMessage;
 import crossnet.message.crossnet.messages.KeepAliveMessage;
 import crossnet.message.crossnet.messages.PingMessage;
 import crossnet.message.crossnet.messages.RegisterMessage;
+import crossnet.message.crossnet.messages.TieredCrossNetMessage;
 import crossnet.util.ByteArrayReader;
 
 /**

@@ -28,21 +28,20 @@ public class LFLFPacket extends Packet {
 	 * @param payload
 	 *            The payload.
 	 */
-	public LFLFPacket( final byte[] data ) {
-		//TODO Change to protected
-		super( data );
+	protected LFLFPacket( final byte[] payload ) {
+		super( payload );
 
-		if ( data == null ) {
+		if ( payload == null ) {
 			throw new IllegalArgumentException( "Data cannot be null" );
 		}
 
-		if ( data[data.length - 1] == '\n' ) {
+		if ( payload[payload.length - 1] == '\n' ) {
 			throw new IllegalArgumentException( "LFLFPacket cannot end with a linefeed character." );
 		}
 
 		boolean prevIsLF = false;
-		for ( int i = 0; i < data.length; i++ ) {
-			if ( data[i] == '\n' ) {
+		for ( int i = 0; i < payload.length; i++ ) {
+			if ( payload[i] == '\n' ) {
 				if ( prevIsLF ) {
 					// Two consecutive LFs found.
 					throw new IllegalArgumentException( "LFLFPacket cannot contain two consecutive linefeed characters." );

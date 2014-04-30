@@ -146,7 +146,7 @@ public class CrossNetServer extends LocalEndPoint {
 			selects = this.selector.selectNow();
 		}
 		if ( selects == 0 ) {
-			if ( updateTime > 0 && ( System.currentTimeMillis() < ( updateTime + ( timeout / 2 ) ) ) ) {
+			if ( ( updateTime > 0 ) && ( System.currentTimeMillis() < ( updateTime + ( timeout / 2 ) ) ) ) {
 				Log.trace( "CrossNet", "Update got 0 selects rather quickly." );
 			}
 		} else {

@@ -41,7 +41,7 @@ public class TcpTransportLayer extends TransportLayer {
 			return false;
 		}
 
-		if ( this.keepAliveMillis > 0 && timestamp - this.lastWriteTime > this.keepAliveMillis ) {
+		if ( ( this.keepAliveMillis > 0 ) && ( ( timestamp - this.lastWriteTime ) > this.keepAliveMillis ) ) {
 			return true;
 		}
 
@@ -54,7 +54,7 @@ public class TcpTransportLayer extends TransportLayer {
 			return false;
 		}
 
-		if ( this.timeoutMillis > 0 && timestamp - this.lastReadTime > this.timeoutMillis ) {
+		if ( ( this.timeoutMillis > 0 ) && ( ( timestamp - this.lastReadTime ) > this.timeoutMillis ) ) {
 			return true;
 		}
 
@@ -67,7 +67,7 @@ public class TcpTransportLayer extends TransportLayer {
 			return false;
 		}
 
-		if ( this.pingMillis > 0 && timestamp - this.pingSendTime > this.pingMillis ) {
+		if ( ( this.pingMillis > 0 ) && ( ( timestamp - this.pingSendTime ) > this.pingMillis ) ) {
 			return true;
 		}
 
@@ -118,7 +118,7 @@ public class TcpTransportLayer extends TransportLayer {
 			int end = this.writeBuffer.position();
 
 			// Write to socket if nothing was queued.
-			if ( start == 0 && !writeToSocket() ) {
+			if ( ( start == 0 ) && !this.writeToSocket() ) {
 				// The write was only partial.
 				this.selectionKey.interestOps( SelectionKey.OP_READ | SelectionKey.OP_WRITE );
 			} else {
@@ -128,9 +128,9 @@ public class TcpTransportLayer extends TransportLayer {
 
 			if ( Log.DEBUG ) {
 				float bufferLoad = this.writeBuffer.position() / (float) this.writeBuffer.capacity();
-				if ( Log.DEBUG && bufferLoad > 0.75f ) {
+				if ( Log.DEBUG && ( bufferLoad > 0.75f ) ) {
 					Log.debug( "CrossNet", this.connection + " write buffer is approaching capacity: " + bufferLoad );
-				} else if ( Log.TRACE && bufferLoad > 0.25f ) {
+				} else if ( Log.TRACE && ( bufferLoad > 0.25f ) ) {
 					Log.trace( "CrossNet", this.connection + " write buffer load: " + bufferLoad );
 				}
 			}

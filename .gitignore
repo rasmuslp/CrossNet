@@ -6,3 +6,4 @@
 # Java specific
 *.class
 */bin
+*/doc

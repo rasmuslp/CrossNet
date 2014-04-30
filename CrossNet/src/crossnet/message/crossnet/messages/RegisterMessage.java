@@ -3,6 +3,8 @@ package crossnet.message.crossnet.messages;
 import java.io.IOException;
 
 import crossnet.Connection;
+import crossnet.CrossNetClient;
+import crossnet.CrossNetServer;
 import crossnet.log.Log;
 import crossnet.message.crossnet.CrossNetMessage;
 import crossnet.message.crossnet.CrossNetMessageType;

@@ -7,9 +7,9 @@ import crossnet.listener.ConnectionListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
 import crossnet.message.crossnet.CrossNetMessage;
-import crossnet.message.crossnet.messages.TieredCrossNetMessage;
 import crossnet.message.crossnet.messages.KeepAliveMessage;
 import crossnet.message.crossnet.messages.PingMessage;
+import crossnet.message.crossnet.messages.TieredCrossNetMessage;
 
 /**
  * A Connection between a {@link CrossNetClient} and a {@link CrossNetServer}.
@@ -92,7 +92,7 @@ public class Connection {
 	 * Set the connected status.
 	 * 
 	 * @param isConnected
-	 *            {@link true} iff considered fully connected.
+	 *            {@code true} iff considered fully connected.
 	 */
 	void setConnected( boolean isConnected ) {
 		this.isConnected = isConnected;
@@ -182,7 +182,8 @@ public class Connection {
 	/**
 	 * Send a Message through this Connection.
 	 * <p>
-	 * If the Message is not a {@link CrossNetMessage}, it will be wrapped in a {@link TieredCrossNetMessage} for transportation.
+	 * If the Message is not a {@link CrossNetMessage}, it will be wrapped in a {@link TieredCrossNetMessage} for
+	 * transportation.
 	 * 
 	 * @param message
 	 *            The Message to send.
@@ -216,7 +217,7 @@ public class Connection {
 			return length;
 		} catch ( IOException ex ) {
 			Log.debug( "CrossNet", "Unable to send with connection: " + this, ex );
-			close();
+			this.close();
 			return 0;
 		}
 	}

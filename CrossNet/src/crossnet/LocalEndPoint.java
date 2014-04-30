@@ -104,7 +104,7 @@ public abstract class LocalEndPoint implements Runnable {
 	}
 
 	/**
-	 * Closes all {@link Connections}.
+	 * Closes all {@link Connection}s.
 	 * 
 	 * @see CrossNetClient#close()
 	 * @see CrossNetServer#close()

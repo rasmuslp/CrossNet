@@ -172,7 +172,7 @@ public class Log {
 			// Add time stamp
 			long time = new Date().getTime() - this.firstTimeStamp;
 			long minutes = time / ( 1000 * 60 );
-			long seconds = time / ( 1000 ) % 60;
+			long seconds = ( time / ( 1000 ) ) % 60;
 			long millis = time - ( minutes * 1000 * 60 ) - ( seconds * 1000 );
 			if ( minutes < 10 ) {
 				builder.append( '0' );
