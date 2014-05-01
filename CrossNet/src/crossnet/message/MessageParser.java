@@ -1,5 +1,7 @@
 package crossnet.message;
 
+import crossnet.util.ByteArrayReader;
+
 /**
  * Parses byte arrays to {@link Message}s.
  * <p>
@@ -27,14 +29,14 @@ public interface MessageParser {
 	public MessageParser getTieredMessageParser();
 
 	/**
-	 * Parse data and tries to construct a Message.
+	 * Tries to construct a Message by parsing data.
 	 * <p>
 	 * May return null if there was not enough data or an error occurred.
 	 * 
-	 * @param data
-	 *            The data to parse.
+	 * @param payload
+	 *            The data source to parse from.
 	 * @return A freshly parsed Message.
 	 */
-	public Message parseData( byte[] data );
+	public Message parseData( ByteArrayReader payload );
 
 }

@@ -6,7 +6,6 @@ import crossnet.listener.ConnectionListener;
 import crossnet.listener.ConnectionListenerHandler;
 import crossnet.log.Log;
 import crossnet.message.Message;
-import crossnet.message.crossnet.CrossNetMessage;
 import crossnet.message.crossnet.messages.KeepAliveMessage;
 import crossnet.message.crossnet.messages.PingMessage;
 import crossnet.message.crossnet.messages.TieredCrossNetMessage;
@@ -159,7 +158,7 @@ public class Connection {
 		// Log
 		if ( Log.DEBUG ) {
 			String messageClass = message.getClass().getSimpleName();
-			if ( !( message instanceof CrossNetMessage ) ) {
+			if ( message instanceof TieredCrossNetMessage ) {
 				Log.debug( "CrossNet", this + " received: " + messageClass );
 			} else if ( Log.TRACE ) {
 				Log.trace( "CrossNet", this + " received: " + messageClass );
@@ -181,9 +180,6 @@ public class Connection {
 
 	/**
 	 * Send a Message through this Connection.
-	 * <p>
-	 * If the Message is not a {@link CrossNetMessage}, it will be wrapped in a {@link TieredCrossNetMessage} for
-	 * transportation.
 	 * 
 	 * @param message
 	 *            The Message to send.
@@ -194,21 +190,13 @@ public class Connection {
 			throw new IllegalArgumentException( "Cannot send null." );
 		}
 
-		String messageClass = message.getClass().getSimpleName();
-		boolean wrapped = false;
-		if ( !( message instanceof CrossNetMessage ) ) {
-			// Wrap message in TieredCrossNetMessage
-			byte[] messageData = message.getBytes();
-			message = new TieredCrossNetMessage( messageData );
-			wrapped = true;
-		}
-
 		try {
 			int length = this.transportLayer.send( message );
 			if ( length == 0 ) {
 				Log.trace( "CrossNet", this + " had nothing to send." );
 			} else if ( Log.DEBUG ) {
-				if ( wrapped ) {
+				String messageClass = message.getClass().getSimpleName();
+				if ( message instanceof TieredCrossNetMessage ) {
 					Log.debug( "CrossNet", this + " sent: " + messageClass + " (" + length + ")" );
 				} else if ( Log.TRACE ) {
 					Log.trace( "CrossNet", this + " sent: " + messageClass + " (" + length + ")" );

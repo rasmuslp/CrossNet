@@ -39,17 +39,20 @@ public abstract class AbstractMessageParser< E extends Enum< E > > implements Me
 	}
 
 	@Override
-	public Message parseData( byte[] data ) {
-		if ( data.length == 0 ) {
-			Log.warn( "CrossNet", "Data length was zero, nothing to parse." );
+	public Message parseData( ByteArrayReader payload ) {
+		try {
+			if ( payload.bytesAvailable() == 0 ) {
+				Log.warn( "CrossNet", "No bytes available: Nothing to parse." );
+				return null;
+			}
+		} catch ( IOException e ) {
+			Log.warn( "CrossNet", "Could not get bytes available: Nothing to parse." );
 			return null;
 		}
 
-		ByteArrayReader dataReader = new ByteArrayReader( data );
-
 		int type = -1;
 		try {
-			type = dataReader.readUnsignedByte();
+			type = payload.readUnsignedByte();
 		} catch ( IOException e ) {
 			Log.error( "CrossNet", "Could not read type: Cannot parse.", e );
 			return null;
@@ -63,14 +66,14 @@ public abstract class AbstractMessageParser< E extends Enum< E > > implements Me
 			return null;
 		}
 
-		Message message = this.parseType( messageType, dataReader );
+		Message message = this.parseType( messageType, payload );
 
 		if ( message == null ) {
 			Log.error( "CrossNet", "Parsed Message was null. Type was: " + messageType );
 		}
 
 		try {
-			int bytesRemaining = dataReader.bytesAvailable();
+			int bytesRemaining = payload.bytesAvailable();
 			if ( bytesRemaining > 0 ) {
 				Log.error( "CrossNet", "Not all data was consumed when parsing type: " + messageType + ". Bytes remaining: " + bytesRemaining );
 			}

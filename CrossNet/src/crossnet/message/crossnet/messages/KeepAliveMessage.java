@@ -20,7 +20,7 @@ public class KeepAliveMessage extends CrossNetMessage {
 	}
 
 	@Override
-	protected void serializePayload( ByteArrayWriter to ) {
+	protected void serializeCrossNetPayload( ByteArrayWriter to ) {
 		// No payload to serialise.
 	}
 

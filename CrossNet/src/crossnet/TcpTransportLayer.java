@@ -12,6 +12,7 @@ import crossnet.message.Message;
 import crossnet.message.MessageParser;
 import crossnet.packet.Packet;
 import crossnet.packet.length.LengthPacketFactory;
+import crossnet.util.ByteArrayReader;
 
 /**
  * TransportLayer for raw TCP socket.
@@ -161,7 +162,7 @@ public class TcpTransportLayer extends TransportLayer {
 			return null;
 		}
 
-		return this.messageParser.parseData( packet.getPayload() );
+		return this.messageParser.parseData( new ByteArrayReader( packet.getPayload() ) );
 	}
 
 	@Override
