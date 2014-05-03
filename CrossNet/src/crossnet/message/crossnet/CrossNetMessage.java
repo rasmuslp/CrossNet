@@ -24,6 +24,11 @@ public abstract class CrossNetMessage implements Message {
 	}
 
 	@Override
+	public String getMessageClass() {
+		return this.getClass().getSimpleName();
+	}
+
+	@Override
 	public byte[] getBytes() {
 		try {
 			ByteArrayWriter out = new ByteArrayWriter();

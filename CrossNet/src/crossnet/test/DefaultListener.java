@@ -19,7 +19,7 @@ public class DefaultListener extends ConnectionListenerAdapter {
 
 	@Override
 	public void received( Connection connection, Message message ) {
-		System.out.println( connection + " received: " + message.getClass().getSimpleName() );
+		System.out.println( connection + " received: " + message.getMessageClass() );
 	}
 
 }

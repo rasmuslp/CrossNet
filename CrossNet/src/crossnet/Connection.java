@@ -157,11 +157,10 @@ public class Connection {
 	void notifyReceived( Message message ) {
 		// Log
 		if ( Log.DEBUG ) {
-			String messageClass = message.getClass().getSimpleName();
 			if ( message instanceof TieredCrossNetMessage ) {
-				Log.debug( "CrossNet", this + " received: " + messageClass );
+				Log.debug( "CrossNet", this + " received: " + message.getMessageClass() );
 			} else if ( Log.TRACE ) {
-				Log.trace( "CrossNet", this + " received: " + messageClass );
+				Log.trace( "CrossNet", this + " received: " + message.getMessageClass() );
 			}
 		}
 
@@ -195,11 +194,10 @@ public class Connection {
 			if ( length == 0 ) {
 				Log.trace( "CrossNet", this + " had nothing to send." );
 			} else if ( Log.DEBUG ) {
-				String messageClass = message.getClass().getSimpleName();
 				if ( message instanceof TieredCrossNetMessage ) {
-					Log.debug( "CrossNet", this + " sent: " + messageClass + " (" + length + ")" );
+					Log.debug( "CrossNet", this + " sent: " + message.getMessageClass() + " (" + length + ")" );
 				} else if ( Log.TRACE ) {
-					Log.trace( "CrossNet", this + " sent: " + messageClass + " (" + length + ")" );
+					Log.trace( "CrossNet", this + " sent: " + message.getMessageClass() + " (" + length + ")" );
 				}
 			}
 			return length;

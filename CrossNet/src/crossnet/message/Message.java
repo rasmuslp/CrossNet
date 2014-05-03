@@ -11,8 +11,11 @@ import crossnet.Connection;
 public interface Message {
 
 	/**
-	 * Get the bytes that constitutes this Message.
-	 * 
+	 * @return A Class name of this Message-
+	 */
+	public String getMessageClass();
+
+	/**
 	 * @return The bytes that constitutes this Message.
 	 */
 	public byte[] getBytes();
