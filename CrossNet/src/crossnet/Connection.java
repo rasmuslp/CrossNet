@@ -156,12 +156,10 @@ public class Connection {
 	 */
 	void notifyReceived( Message message ) {
 		// Log
-		if ( Log.DEBUG ) {
-			if ( message instanceof TieredCrossNetMessage ) {
-				Log.debug( "CrossNet", this + " received: " + message.getMessageClass() );
-			} else if ( Log.TRACE ) {
-				Log.trace( "CrossNet", this + " received: " + message.getMessageClass() );
-			}
+		if ( message instanceof TieredCrossNetMessage ) {
+			Log.debug( "CrossNet", this + " received: " + message.getMessageClass() );
+		} else {
+			Log.trace( "CrossNet", this + " received: " + message.getMessageClass() );
 		}
 
 		// Handle
