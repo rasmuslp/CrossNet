@@ -60,6 +60,9 @@ public class ByteArrayWriter {
 	 */
 	public void writeString255( String string ) throws IOException {
 		byte[] stringBytes = string.getBytes( Charset.forName( "UTF-8" ) );
+		if ( stringBytes.length > 255 ) {
+			throw new IllegalArgumentException( "Length of serialised string exceeded 255 bytes. Length was: " + stringBytes.length + " and the string was: " + string );
+		}
 		this.writeByte( stringBytes.length );
 		this.writeByteArray( stringBytes );
 	}
