@@ -222,7 +222,7 @@ public class Log {
 			builder.append( message.trim() + ' ' );
 
 			// Add source location
-			if ( Log.currentLogLevel.ordinal() < LogLevel.INFO.ordinal() ) {
+			if ( Log.DEBUG ) {
 				StackTraceElement el = Thread.currentThread().getStackTrace()[3];
 				String location = "";
 				try ( Formatter formatter = new Formatter() ) {
@@ -232,7 +232,7 @@ public class Log {
 			}
 
 			// Add throwable
-			if ( throwable != null ) {
+			if ( Log.DEBUG && throwable != null ) {
 				StringWriter writer = new StringWriter( 256 );
 				throwable.printStackTrace( new PrintWriter( writer ) );
 				builder.append( '\n' );
